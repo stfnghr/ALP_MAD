@@ -7,3 +7,10 @@
 
 import Foundation
 
+struct CommentModel: Codable, Identifiable {
+    var id = UUID()
+    var author: UserModel
+    var text: String
+    var commentDate: Date
+    var post: PostModel
+}

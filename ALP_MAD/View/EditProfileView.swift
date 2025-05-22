@@ -1,5 +1,5 @@
 //
-//  ProfileView.swift
+//  EditProfileView.swift
 //  ALP_MAD
 //
 //  Created by Stefanie Agahari on 22/05/25.
@@ -7,8 +7,13 @@
 
 import SwiftUI
 
-struct ProfileView: View {
-
+struct EditProfileView: View {
+    
+    @State var name = ""
+    @State var email = ""
+    @State var phoneNumber = ""
+    @State var saveButtonDisabled: Bool = true
+    
     var body: some View {
         VStack {
             Text("Profile")
@@ -19,51 +24,50 @@ struct ProfileView: View {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Name:")
                     .fontWeight(.semibold)
-                Text("Igny Romy")
+                TextField("Name", text: $name)
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .frame(height: 50)
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(30)
-
+                
                 Text("Email:")
                     .fontWeight(.semibold)
-                Text("ignyromy@email")
+                TextField("Email", text: $email)
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .frame(height: 50)
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(30)
-
+                
                 Text("Phone Number:")
                     .fontWeight(.semibold)
-                Text("0812-3456-7890")
+                TextField("Phone Number", text: $phoneNumber)
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .frame(height: 50)
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(30)
             }
-
+            
             HStack {
-                NavigationLink(destination: EditProfileView()) {
-                    Text("Edit Profile")
-                        .foregroundColor(.white)
-                        .fontWeight(.semibold)
-                        .padding()
-                        .frame(width: 150, height: 40)
-                        .background(Color.orange)
-                        .cornerRadius(20)
-                }
-
-                // ntar diganti NavLink
                 Button(action: {}) {
-                    Text("Log Out")
+                    Text("Cancel")
                         .foregroundColor(.white)
                         .fontWeight(.semibold)
                         .padding()
                         .frame(width: 150, height: 40)
                         .background(Color.red)
+                        .cornerRadius(20)
+                }
+                
+                Button(action: {}) {
+                    Text("Save")
+                        .foregroundColor(.white)
+                        .fontWeight(.semibold)
+                        .padding()
+                        .frame(width: 150, height: 40)
+                        .background(Color.green)
                         .cornerRadius(20)
                 }
             } .padding(.top, 50)
@@ -74,5 +78,5 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView()
+    EditProfileView()
 }
