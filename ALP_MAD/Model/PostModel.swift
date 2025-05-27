@@ -7,5 +7,12 @@
 
 import Foundation
 
-class Post {
+struct PostModel: Codable, Identifiable {
+    var id = UUID()
+    var author: UserModel
+    var itemName: String
+    var description: String
+    var location: String
+    var postDate: Date
+    var status: Bool
 }
