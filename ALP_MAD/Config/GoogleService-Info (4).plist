@@ -26,5 +26,7 @@
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:1002848601763:ios:36e8e9722239e6e8082116</string>
+	<key>DATABASE_URL</key>
+	<string>https://alp-mad-5b022-default-rtdb.asia-southeast1.firebasedatabase.app</string>
 </dict>
 </plist>
