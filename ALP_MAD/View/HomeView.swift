@@ -1,39 +1,88 @@
+/// View Folder/HomeView.swift
 import SwiftUI
-
 struct HomeView: View {
+    @EnvironmentObject var postViewModel: PostViewModel
+    @EnvironmentObject var authViewModel: AuthViewModel
     @State private var selectedIndex = 0
     let options = ["All Posts", "My Posts"]
-
+    @State private var showingCreatePostView = false
     var body: some View {
         NavigationStack {
             VStack {
-                Text("App Name")
-                    .font(.title)
-                    .fontWeight(.semibold)
-                    .padding()
-
-                Picker("", selection: $selectedIndex) {
+                Picker("Filter Posts", selection: $selectedIndex) {
                     ForEach(0..<options.count, id: \.self) { index in
                         Text(options[index])
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding()
-
-                ScrollView {
-                    VStack(spacing: 16) {
-                        NavigationLink(destination: PostDetailView()) {
-                            HomeCardView()
-                        }
-                        .buttonStyle(PlainButtonStyle()) // Optional: Removes blue highlight
+                .onChange(of: selectedIndex) { newIndex in
+                    if newIndex == 1 {
+                        postViewModel.fetchUserPosts()
                     }
-                    .padding()
                 }
-            } 
-        } .tint(.orange)
+                if postViewModel.isLoading && (selectedIndex == 0 ? postViewModel.posts.isEmpty : postViewModel.userPosts.isEmpty) {
+                    ProgressView("Loading posts...")
+                        .padding()
+                } else if let errorMessage = postViewModel.errorMessage,
+                          (selectedIndex == 0 ? postViewModel.posts.isEmpty : postViewModel.userPosts.isEmpty) {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .padding()
+                }
+                ScrollView {
+                    let postsToDisplay = selectedIndex == 0 ? postViewModel.posts : postViewModel.userPosts
+                    
+                    if postsToDisplay.isEmpty && !postViewModel.isLoading {
+                        Text(selectedIndex == 0 ? "No posts available yet." : "You haven't created any posts yet.")
+                            .foregroundColor(.gray)
+                            .padding(.top, 50)
+                    } else {
+                        LazyVStack(spacing: 16) {
+                            ForEach(postsToDisplay) { post in
+                                NavigationLink(destination: PostDetailView(post: post).environmentObject(authViewModel)) { // Ensure authViewModel is passed if PostDetailView needs it
+                                    HomeCardView(post: post)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                        .padding()
+                    }
+                }
+            }
+            .navigationTitle("Lost & Found")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        showingCreatePostView = true
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title2)
+                    }
+                }
+            }
+            .sheet(isPresented: $showingCreatePostView) {
+                // CreatePostView will inherit EnvironmentObjects from HomeView
+                CreatePostView()
+            }
+            .onAppear {
+                if selectedIndex == 0 {
+                } else if selectedIndex == 1 {
+                     postViewModel.fetchUserPosts()
+                }
+            
+                else if selectedIndex == 0 && postViewModel.posts.isEmpty && !postViewModel.isLoading {
+                    postViewModel.fetchPosts()
+                }
+            }
+        }
+        .tint(.orange)
     }
 }
 
 #Preview {
     HomeView()
+        .environmentObject(PostViewModel())
+        .environmentObject(AuthViewModel())
 }
+

@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct LoginSignUpView: View {
+    @Binding var showAuthSheet: Bool
+    @EnvironmentObject var authVM: AuthViewModel
+    
     @State private var signUpClicked: Bool = true
     @State private var name: String = ""
     @State private var nim: String = ""
@@ -30,7 +33,7 @@ struct LoginSignUpView: View {
                         VStack(alignment: .leading, spacing: 10) {
                             Text("Email")
                                 .padding(.leading, 15)
-                            TextField("Enter your UC Email", text: $email)
+                            TextField("Enter your UC Email", text: $authVM.myUser.email)
                                 .padding()
                                 .background(Color(.systemGray6))
                                 .cornerRadius(25)
@@ -42,7 +45,7 @@ struct LoginSignUpView: View {
 
                             Text("Password")
                                 .padding(.leading, 15)
-                            SecureField("Enter your Password", text: $password)
+                            SecureField("Enter your Password", text: $authVM.myUser.password)
                                 .padding()
                                 .background(Color(.systemGray6))
                                 .cornerRadius(25)
@@ -69,7 +72,14 @@ struct LoginSignUpView: View {
 
                     // Login Button
                     Button(action: {
-                        // Handle login
+                        Task {
+                            await authVM.signIn()
+                            if !authVM.falseCredential {
+                                authVM.checkUserSession()
+                                showAuthSheet = !authVM.isSignedIn
+                                authVM.myUser = UserModel()
+                            }
+                        }
                     }) {
                         Text("LOG IN")
                             .font(.system(size: 12))
@@ -100,7 +110,7 @@ struct LoginSignUpView: View {
                         VStack(alignment: .leading) {
                             Text("Name")
                                 .padding(.leading)
-                            TextField("Name", text: $name)
+                            TextField("Name", text: $authVM.myUser.name)
                                 .padding()
                                 .background(Color(.systemGray6))
                                 .cornerRadius(25)
@@ -109,7 +119,7 @@ struct LoginSignUpView: View {
                         VStack(alignment: .leading) {
                             Text("NIM")
                                 .padding(.leading)
-                            TextField("NIM", text: $nim)
+                            TextField("NIM", text: $authVM.myUser.nim)
                                 .padding()
                                 .background(Color(.systemGray6))
                                 .cornerRadius(25)
@@ -118,7 +128,7 @@ struct LoginSignUpView: View {
                         VStack(alignment: .leading) {
                             Text("Phone Number")
                                 .padding(.leading)
-                            TextField("Phone Number", text: $phoneNumber)
+                            TextField("Phone Number", text: $authVM.myUser.phoneNumber)
                                 .padding()
                                 .background(Color(.systemGray6))
                                 .cornerRadius(25)
@@ -127,22 +137,16 @@ struct LoginSignUpView: View {
                         VStack(alignment: .leading) {
                             Text("Email")
                                 .padding(.leading)
-                            TextField("Enter your UC Email", text: $email)
+                            TextField("Enter your UC Email", text: $authVM.myUser.email)
                                 .padding()
                                 .background(Color(.systemGray6))
                                 .cornerRadius(25)
-                            
-                            //for error handling later
-                            /*Text("Invalid Email")
-                                .padding(.leading, 5)
-                                .fontWeight(.medium)
-                                .foregroundColor(Color.red)*/
                         }
 
                         VStack(alignment: .leading) {
                             Text("Password")
                                 .padding(.leading)
-                            SecureField("Make a Password", text: $password)
+                            SecureField("Make a Password", text: $authVM.myUser.password)
                                 .padding()
                                 .background(Color(.systemGray6))
                                 .cornerRadius(25)
@@ -152,6 +156,12 @@ struct LoginSignUpView: View {
                                 .padding(.leading, 5)
                                 .fontWeight(.medium)
                                 .foregroundColor(Color.red)*/
+                            
+                            if authVM.falseCredential {
+                                Text("Invalid Username and Password")
+                                    .fontWeight(.medium)
+                                    .foregroundColor(Color.red)
+                            }
                         }
                         
                         // Already have account
@@ -178,7 +188,16 @@ struct LoginSignUpView: View {
 
                     // Sign Up Button
                     Button(action: {
-                        // Handle sign up logic
+                        Task {
+                            await authVM.signUp()
+                            if !authVM.falseCredential {
+                                authVM.checkUserSession()
+                                showAuthSheet = !authVM.isSignedIn
+                                authVM.myUser = UserModel()
+                            }
+                            
+                            signUpClicked = true
+                        }
                     }) {
                         Text("SIGN UP")
                             .font(.system(size: 12))
@@ -204,5 +223,6 @@ struct LoginSignUpView: View {
 }
 
 #Preview {
-    LoginSignUpView()
+    LoginSignUpView(showAuthSheet: .constant(true))
+        .environmentObject(AuthViewModel())
 }
