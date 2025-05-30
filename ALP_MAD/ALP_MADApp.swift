@@ -8,30 +8,22 @@
 
 import SwiftUI
 import FirebaseCore
-import FirebaseAppCheck
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication,
+                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    FirebaseApp.configure()
+    return true
+  }
+}
 
 @main
 struct ALP_MADApp: App {
-    @StateObject private var authVM = AuthViewModel()
-    @StateObject private var userVM = UserViewModel()
-    @StateObject private var postVM = PostViewModel()
-    
-    init() {
-        FirebaseApp.configure()
-        
-        #if DEBUG
-            let providerFactory = AppCheckDebugProviderFactory()
-            AppCheck.setAppCheckProviderFactory(providerFactory)
-        #endif
-    }
-    
-    
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var authViewModel = AuthViewModel()
     var body: some Scene {
         WindowGroup {
-            MainView()
-                .environmentObject(authVM)
-                .environmentObject(userVM)
-                .environmentObject(postVM)
+            MainView(authViewModel: authViewModel)
         }
     }
 }

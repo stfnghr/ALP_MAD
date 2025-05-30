@@ -9,10 +9,14 @@
 import SwiftUI
 
 struct MainView: View {
-    @EnvironmentObject var postViewModel: PostViewModel
-    @EnvironmentObject var authViewModel: AuthViewModel
-    @EnvironmentObject var userViewModel: UserViewModel
-    @State private var showAuthSheet = false
+    @StateObject var postViewModel = PostViewModel()
+    @StateObject var authViewModel: AuthViewModel
+    @State private var showAuthSheet: Bool = false
+
+    init(authViewModel: AuthViewModel) {
+        _authViewModel = StateObject(wrappedValue: authViewModel)
+    }
+
 
     var body: some View {
         Group {
@@ -22,39 +26,32 @@ struct MainView: View {
                         .tabItem {
                             Label("Home", systemImage: "house")
                         }
-                    Text("Placeholder for Create Post Tab")
-                        .tabItem {
-                            Label("New Post", systemImage: "plus.square.fill")
-                        }
+                        Text("Placeholder for Create Post Tab") // Replace with actual CreatePostView or button
+                             .tabItem {
+                                 Label("New Post", systemImage: "plus.square.fill")
+                             }
 
-                    ProfileView(showAuthSheet: $showAuthSheet)
+                    ProfileView()
                         .tabItem {
                             Label("Profile", systemImage: "person")
                         }
-                        .onAppear {
-                            userViewModel.fetchUser()
-                        }
                 }
                 .tint(.orange)
+                // Inject the PostViewModel into the environment for HomeView and CreatePostView
+                .environmentObject(postViewModel)
+                .environmentObject(authViewModel) // Also pass authViewModel if needed by tabs
             } else {
-                // show nothing but the white void instead of the mainview underneath the funny login sheet
+                // Show LoginSignUpView if not signed in
+                LoginSignUpView(showAuthSheet: $authViewModel.isSignedIn) // Pass binding
+                    .environmentObject(authViewModel)
             }
         }
         .onAppear {
-            if !authViewModel.isSignedIn {
-                showAuthSheet = true
-            }
-        }
-        .fullScreenCover(isPresented: $showAuthSheet) {
-            LoginSignUpView(showAuthSheet: $showAuthSheet)
+            authViewModel.checkUserSession()
         }
     }
 }
 
-
 #Preview {
-    MainView()
-        .environmentObject(UserViewModel())
-        .environmentObject(PostViewModel())
-        .environmentObject(AuthViewModel())
+    MainView(authViewModel: AuthViewModel())
 }

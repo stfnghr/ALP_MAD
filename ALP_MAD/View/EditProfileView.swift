@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct EditProfileView: View {
-    @EnvironmentObject var userVM: UserViewModel
+    
+    @State var name = ""
     @State var email = ""
     @State var phoneNumber = ""
     @State var saveButtonDisabled: Bool = true
-    @Binding var isEditingProfile: Bool
     
     var body: some View {
         VStack {
@@ -24,7 +24,7 @@ struct EditProfileView: View {
             VStack(alignment: .leading, spacing: 20) {
                 Text("Name:")
                     .fontWeight(.semibold)
-                TextField("Name", text: $userVM.myUser.name)
+                TextField("Name", text: $name)
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .frame(height: 50)
@@ -33,7 +33,7 @@ struct EditProfileView: View {
                 
                 Text("Email:")
                     .fontWeight(.semibold)
-                TextField("Email", text: $userVM.myUser.email)
+                TextField("Email", text: $email)
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .frame(height: 50)
@@ -42,7 +42,7 @@ struct EditProfileView: View {
                 
                 Text("Phone Number:")
                     .fontWeight(.semibold)
-                TextField("Phone Number", text: $userVM.myUser.phoneNumber)
+                TextField("Phone Number", text: $phoneNumber)
                     .padding()
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .frame(height: 50)
@@ -51,9 +51,7 @@ struct EditProfileView: View {
             }
             
             HStack {
-                Button(action: {
-                    isEditingProfile = false
-                }) {
+                Button(action: {}) {
                     Text("Cancel")
                         .foregroundColor(.white)
                         .fontWeight(.semibold)
@@ -63,11 +61,7 @@ struct EditProfileView: View {
                         .cornerRadius(20)
                 }
                 
-                Button(action: {
-                    userVM.updateUser()
-                    isEditingProfile = false
-                    userVM.fetchUser()
-                }) {
+                Button(action: {}) {
                     Text("Save")
                         .foregroundColor(.white)
                         .fontWeight(.semibold)
@@ -77,14 +71,14 @@ struct EditProfileView: View {
                         .cornerRadius(20)
                 }
             } .padding(.top, 50)
-        }
-        .padding()
+        } .padding()
         
         Spacer()
+        // Trdt
+        // Contoh
     }
 }
 
 #Preview {
-    EditProfileView(isEditingProfile: .constant(true))
-        .environmentObject(UserViewModel())
+    EditProfileView()
 }
