@@ -8,22 +8,30 @@
 
 import SwiftUI
 import FirebaseCore
-
-class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
-    return true
-  }
-}
+import FirebaseAppCheck
 
 @main
 struct ALP_MADApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject var authViewModel = AuthViewModel()
+    @StateObject private var authVM = AuthViewModel()
+    @StateObject private var userVM = UserViewModel()
+    @StateObject private var postVM = PostViewModel()
+    
+    init() {
+        FirebaseApp.configure()
+        
+        #if DEBUG
+            let providerFactory = AppCheckDebugProviderFactory()
+            AppCheck.setAppCheckProviderFactory(providerFactory)
+        #endif
+    }
+    
+    
     var body: some Scene {
         WindowGroup {
-            MainView(authViewModel: authViewModel)
+            MainView()
+                .environmentObject(authVM)
+                .environmentObject(userVM)
+                .environmentObject(postVM)
         }
     }
 }
