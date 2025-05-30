@@ -9,8 +9,9 @@ import Foundation
 
 struct UserModel: Codable, Identifiable {
     var id = UUID()
-    var name: String
-    var email: String
-    var password: String
-    var phoneNumber: String
+    var name: String = ""
+    var nim: String = ""
+    var email: String = ""
+    var password: String = ""
+    var phoneNumber: String = ""
 }

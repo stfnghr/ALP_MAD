@@ -67,9 +67,9 @@ struct ProfileView: View {
                         .cornerRadius(20)
                 }
             } .padding(.top, 50)
+            
+            Spacer()
         } .padding()
-        
-        Spacer()
     }
 }
 
