@@ -2,14 +2,11 @@
 import SwiftUI
 
 struct CreatePostView: View {
-    @Environment(\.presentationMode) var presentationMode
-
+ 
     @State private var itemName: String = ""
     @State private var lostLocation: String = ""
     @State private var descriptionText: String = ""
-
     @EnvironmentObject var postViewModel: PostViewModel
-
     @State private var showAlert: Bool = false
     @State private var alertTitle: String = ""
     @State private var alertMessage: String = ""
@@ -114,6 +111,7 @@ struct CreatePostView: View {
                     }
                     .disabled(itemName.isEmpty || lostLocation.isEmpty || descriptionText.isEmpty || postViewModel.isLoading)
                     .padding(.bottom, 20)
+                    // Basically just a check the buttomn will be disabled if any of the three fields is empty
 
                 }
                 .padding(.horizontal, 25)
@@ -127,19 +125,11 @@ struct CreatePostView: View {
                     self.lostLocation = ""
                     self.descriptionText = ""
                     postViewModel.postCreationSuccess = false
-                    presentationMode.wrappedValue.dismiss()
-                }
-            }
-            .onChange(of: postViewModel.errorMessage) { newErrorMessage in
-                if let message = newErrorMessage, !message.isEmpty {
-                    self.alertTitle = "Error"
-                    self.alertMessage = message
-                    self.showAlert = true
-                    postViewModel.errorMessage = nil
                 }
             }
             .alert(isPresented: $showAlert) {
                 Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                // alert message thats shown when a post is succesfully made
             }
         }
     }
@@ -150,7 +140,6 @@ struct CreatePostView: View {
         CreatePostView()
             .environmentObject(PostViewModel())
             .environmentObject(AuthViewModel())
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle("")
+
     }
 }
