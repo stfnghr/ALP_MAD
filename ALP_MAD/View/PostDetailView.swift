@@ -4,6 +4,8 @@ struct PostDetailView: View {
     let post: PostModel
     @State private var commentText: String = ""
     @EnvironmentObject var postViewModel: PostViewModel
+    @ObservedObject var commentViewModel: CommentViewModel
+    
     var body: some View {
         VStack {
             ScrollView {
@@ -11,7 +13,7 @@ struct PostDetailView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Text(post.author.name)
-                        Text(postViewModel.postDateFormatter.string(from: post.postDate)) // MODIFIED
+                        Text(postViewModel.postDateFormatter.string(from: post.postDate))
                             .font(.caption2)
                     }
 
@@ -52,6 +54,7 @@ struct PostDetailView: View {
                 Divider()
                     .padding()
 
+                // Comments Section
                 HStack {
                     Image(systemName: "ellipsis.message")
                     Text("Comments")
@@ -59,25 +62,40 @@ struct PostDetailView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 20)
 
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("User Name")
-                        Text("Comment")
-                            .font(.caption)
+                // Comments List
+                if commentViewModel.isLoading {
+                    ProgressView()
+                        .padding()
+                } else if commentViewModel.comments.isEmpty {
+                    Text("No comments yet")
+                        .foregroundColor(.gray)
+                        .font(.caption)
+                        .padding()
+                } else {
+                    ForEach(commentViewModel.comments) { comment in
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading) {
+                                Text(comment.author.name)
+                                    .font(.subheadline)
+                                Text(comment.text)
+                                    .font(.caption)
+                            }
+                            Spacer()
+                            VStack(alignment: .trailing) {
+                                Text(postViewModel.commentDisplayDateFormatter.string(from: comment.commentDate))
+                                Text(postViewModel.commentDisplayTimeFormatter.string(from: comment.commentDate))
+                            }
+                            .font(.caption2)
+                            .foregroundColor(.gray)
+                        }
+                        .padding(.vertical, 4)
+                        
+                        Divider()
                     }
-                    Spacer()
-                    VStack(alignment: .trailing) {
-                        Text(postViewModel.commentDisplayDateFormatter.string(from: Date().addingTimeInterval(-3600*24))) // MODIFIED
-                        Text(postViewModel.commentDisplayTimeFormatter.string(from: Date().addingTimeInterval(-3600*2)))    // MODIFIED
-                    }
-                    .font(.caption)
-                    .foregroundColor(.gray)
                 }
-
-                Divider()
-                    .padding()
             } // End ScrollView
 
+            // Comment Input
             HStack {
                 TextField("Add a comment...", text: $commentText)
                     .padding(10)
@@ -85,7 +103,7 @@ struct PostDetailView: View {
                     .cornerRadius(10)
 
                 Button(action: {
-                    print("Submitted comment: \(commentText) for post ID: \(post.id)")
+                    commentViewModel.addComment(commentText, to: post.id.uuidString)
                     commentText = ""
                 }) {
                     Image(systemName: "paperplane.fill")
@@ -94,8 +112,21 @@ struct PostDetailView: View {
                 }
                 .disabled(commentText.isEmpty)
             }
+            .padding()
         }
         .padding()
+        .onAppear {
+            commentViewModel.fetchComments(for: post.id.uuidString)
+        }
+        .alert(isPresented: .constant(commentViewModel.errorMessage != nil)) {
+            Alert(
+                title: Text("Error"),
+                message: Text(commentViewModel.errorMessage ?? "Unknown error"),
+                dismissButton: .default(Text("OK")) {
+                    commentViewModel.errorMessage = nil
+                }
+            )
+        }
     }
 }
 
@@ -108,8 +139,9 @@ struct PostDetailView: View {
             location: "Sample Location",
             postDate: Date(),
             status: true
-        ))
+        ), commentViewModel: CommentViewModel())
         .environmentObject(PostViewModel())
-        .environmentObject(AuthViewModel()) 
+        .environmentObject(CommentViewModel())
+        .environmentObject(AuthViewModel())
     }
 }

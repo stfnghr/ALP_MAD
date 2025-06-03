@@ -49,7 +49,7 @@ struct HomeView: View {
                         LazyVStack(spacing: 16) {
                             ForEach(postsToDisplay) { post in
                                 VStack { // Wrap Card and Edit button
-                                    NavigationLink(destination: PostDetailView(post: post)
+                                    NavigationLink(destination: PostDetailView(post: post, commentViewModel: CommentViewModel())
                                         .environmentObject(authViewModel)
                                         .environmentObject(postViewModel) // Pass postViewModel if PostDetailView needs it
                                     ) {
