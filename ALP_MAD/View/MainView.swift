@@ -5,24 +5,56 @@
 //  Created by Stefanie Agahari on 22/05/25.
 //
 
+
 import SwiftUI
 
 struct MainView: View {
-    var body: some View {
-        TabView {
-            HomeView()
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
+    @EnvironmentObject var postViewModel: PostViewModel
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @EnvironmentObject var userViewModel: UserViewModel
+    @State private var showAuthSheet = false
 
-            ProfileView()
-                .tabItem {
-                    Label("Profile", systemImage: "person")
+    var body: some View {
+        Group {
+            if authViewModel.isSignedIn {
+                TabView {
+                    HomeView()
+                        .tabItem {
+                            Label("Home", systemImage: "house")
+                        }
+                    CreatePostView()
+                        .tabItem {
+                            Label("New Post", systemImage: "plus.square.fill")
+                        }
+
+                    ProfileView(showAuthSheet: $showAuthSheet)
+                        .tabItem {
+                            Label("Profile", systemImage: "person")
+                        }
+                        .onAppear {
+                            userViewModel.fetchUser()
+                        }
                 }
-        } .tint(.orange)
+                .tint(.orange)
+            } else {
+                // show nothing but the white void instead of the mainview underneath the funny login sheet
+            }
+        }
+        .onAppear {
+            if !authViewModel.isSignedIn {
+                showAuthSheet = true
+            }
+        }
+        .fullScreenCover(isPresented: $showAuthSheet) {
+            LoginSignUpView(showAuthSheet: $showAuthSheet)
+        }
     }
 }
 
+
 #Preview {
     MainView()
+        .environmentObject(UserViewModel())
+        .environmentObject(PostViewModel())
+        .environmentObject(AuthViewModel())
 }

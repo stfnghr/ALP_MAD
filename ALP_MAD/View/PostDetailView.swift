@@ -1,32 +1,36 @@
 import SwiftUI
 
 struct PostDetailView: View {
+    let post: PostModel
     @State private var commentText: String = ""
-
+    @EnvironmentObject var postViewModel: PostViewModel
     var body: some View {
         VStack {
             ScrollView {
+                // Top HStack: Author, Date, Status
                 HStack {
                     VStack(alignment: .leading) {
-                        Text("Your Name")
-                        Text("May 22, 2025 10:00 AM")
+                        Text(post.author.name)
+                        Text(postViewModel.postDateFormatter.string(from: post.postDate)) // MODIFIED
                             .font(.caption2)
                     }
 
                     Spacer()
 
-                    Text("LOST")
+                    Text(post.status ? "LOST" : "FOUND")
                         .frame(width: 80, height: 35)
-                        .background(Color(red: 1.0, green: 0.66, blue: 0.66))
+                        .background(post.status ? Color(red: 1.0, green: 0.66, blue: 0.66) : Color.green.opacity(0.7))
                         .foregroundColor(.white)
                         .font(.headline)
                         .fontWeight(.bold)
                         .cornerRadius(10)
                 }
 
-                Image("image")
+                Image("Image")
                     .resizable()
+                    .scaledToFit()
                     .frame(width: 350, height: 350)
+                    .foregroundColor(Color(UIColor.systemGray3))
                     .overlay(
                         RoundedRectangle(cornerRadius: 20)
                             .stroke(Color.gray, lineWidth: 0.5)
@@ -34,15 +38,13 @@ struct PostDetailView: View {
                     .padding()
 
                 VStack(alignment: .leading) {
-                    Text("Item Name")
-
+                    Text(post.itemName)
                     HStack {
                         Image(systemName: "location")
-                        Text("Location")
+                        Text(post.location)
                             .font(.caption)
                     }
-
-                    Text("Description")
+                    Text(post.description)
                         .font(.caption)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -63,12 +65,10 @@ struct PostDetailView: View {
                         Text("Comment")
                             .font(.caption)
                     }
-
                     Spacer()
-
                     VStack(alignment: .trailing) {
-                        Text("May 22, 2025")
-                        Text("10:00 AM")
+                        Text(postViewModel.commentDisplayDateFormatter.string(from: Date().addingTimeInterval(-3600*24))) // MODIFIED
+                        Text(postViewModel.commentDisplayTimeFormatter.string(from: Date().addingTimeInterval(-3600*2)))    // MODIFIED
                     }
                     .font(.caption)
                     .foregroundColor(.gray)
@@ -76,7 +76,7 @@ struct PostDetailView: View {
 
                 Divider()
                     .padding()
-            }
+            } // End ScrollView
 
             HStack {
                 TextField("Add a comment...", text: $commentText)
@@ -85,18 +85,31 @@ struct PostDetailView: View {
                     .cornerRadius(10)
 
                 Button(action: {
-                    print("Submitted comment: \(commentText)")
+                    print("Submitted comment: \(commentText) for post ID: \(post.id)")
                     commentText = ""
                 }) {
                     Image(systemName: "paperplane.fill")
-                        .foregroundColor(.orange)
+                        .foregroundColor(commentText.isEmpty ? .gray : .orange)
                         .padding(.leading, 5)
                 }
+                .disabled(commentText.isEmpty)
             }
-        } .padding()
+        }
+        .padding()
     }
 }
 
 #Preview {
-    PostDetailView()
+    NavigationView {
+        PostDetailView(post: PostModel(
+            author: UserModel(name: "Preview User", email: "preview@example.com", password: ""),
+            itemName: "Sample Item Name",
+            description: "This is a sample description of the item.",
+            location: "Sample Location",
+            postDate: Date(),
+            status: true
+        ))
+        .environmentObject(PostViewModel())
+        .environmentObject(AuthViewModel()) 
+    }
 }
