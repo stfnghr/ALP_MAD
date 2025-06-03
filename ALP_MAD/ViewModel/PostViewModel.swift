@@ -5,7 +5,7 @@
 //  Created by student on 27/05/25.
 //
 
-// ViewModel Folder/PostViewModel.swift
+
 import Foundation
 import FirebaseDatabase
 import FirebaseAuth // For current user
@@ -22,6 +22,24 @@ class PostViewModel: ObservableObject {
     private var postsRef: DatabaseReference = Database.database().reference().child("posts")
     private var usersRef: DatabaseReference = Database.database().reference().child("users") // To fetch author details
 
+    var postDateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM dd, yyyy h:mm a"
+        return formatter
+    }
+
+    var commentDisplayDateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM dd, yyyy"
+        return formatter
+    }
+
+    var commentDisplayTimeFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "h:mm a"
+        return formatter
+    }
+
     init() {
         fetchPosts() // Fetch all posts on initialization
     }
@@ -34,14 +52,13 @@ class PostViewModel: ObservableObject {
             self.isLoading = false // Set to false after initial load or update
             guard snapshot.exists(), let value = snapshot.value as? [String: Any] else {
                 self.posts = []
-                // self.errorMessage = "No posts found or data malformed." // Avoid constant error if DB is empty
                 print("Firebase: No posts found or data malformed at /posts.")
                 return
             }
 
             var fetchedPosts: [PostModel] = []
             let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .secondsSince1970 // Assuming Date is stored as Double
+            decoder.dateDecodingStrategy = .secondsSince1970 
 
             for (_, postData) in value {
                 guard let postDict = postData as? [String: Any],
