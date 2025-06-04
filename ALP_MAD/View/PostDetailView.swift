@@ -9,7 +9,6 @@ struct PostDetailView: View {
     var body: some View {
         VStack {
             ScrollView {
-                // Top HStack: Author, Date, Status
                 HStack {
                     VStack(alignment: .leading) {
                         Text(post.author.name)
