@@ -6,7 +6,6 @@ struct EditPostView: View {
         case found = "FOUND"
     }
 
-    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var postViewModel: PostViewModel
     let postToEdit: PostModel?
     @State private var itemName: String = ""
@@ -173,7 +172,7 @@ struct EditPostView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        presentationMode.wrappedValue.dismiss()
+//                        presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
@@ -189,11 +188,7 @@ struct EditPostView: View {
                 Alert(
                     title: Text(alertTitle),
                     message: Text(alertMessage),
-                    dismissButton: .default(Text("OK")) {
-                        if alertTitle == "Post Updated!" {
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    }
+                    dismissButton: .default(Text("OK"))
                 )
             }
         }
