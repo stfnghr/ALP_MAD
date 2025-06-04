@@ -15,5 +15,4 @@ struct PostModel: Codable, Identifiable {
     var location: String
     var postDate: Date
     var status: Bool
-    var comments: CommentModel? 
 }

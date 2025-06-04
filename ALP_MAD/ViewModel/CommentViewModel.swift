@@ -10,6 +10,7 @@ class CommentViewModel: ObservableObject {
     
     private let postsRef = Database.database().reference().child("posts")
     private let usersRef = Database.database().reference().child("users")
+    private let commentsRef = Database.database().reference().child("comments")
     
 //    private let decoder: JSONDecoder = {
         let decoder = JSONDecoder()
@@ -91,6 +92,44 @@ class CommentViewModel: ObservableObject {
         }
     }
     
+    func fetchComments(for postId: String) {
+        isLoading = true
+        errorMessage = nil
+
+        commentsRef
+            .queryOrdered(byChild: "postId")
+            .queryEqual(toValue: postId)
+            .observe(.value) { [weak self] snapshot in
+                guard let self = self else { return }
+                self.isLoading = false
+
+                guard snapshot.exists(),
+                      let commentsDict = snapshot.value as? [String: Any]
+                else {
+                    self.comments = []
+                    return
+                }
+
+                do {
+                    // Convert the values (each comment) into JSON data
+                    let commentsData = try JSONSerialization.data(
+                        withJSONObject: Array(commentsDict.values))
+                    
+                    // Decode JSON into [CommentModel]
+                    let comments = try self.decoder.decode(
+                        [CommentModel].self, from: commentsData)
+
+                    // Sort comments by date descending
+                    self.comments = comments.sorted {
+                        $0.commentDate > $1.commentDate
+                    }
+                } catch {
+                    self.errorMessage = "Failed to decode comments: \(error.localizedDescription)"
+                    print("Decoding error: \(error)")
+                }
+            }
+    }
+    
     // MARK: - Private Methods
     
     private func fetchPost(postId: String, completion: @escaping (Result<PostModel, Error>) -> Void) {
@@ -145,7 +184,8 @@ class CommentViewModel: ObservableObject {
         let newComment = CommentModel(
             author: author,
             text: text,
-            commentDate: Date()
+            commentDate: Date(),
+            postId: post.id.uuidString
         )
         
         do {
@@ -155,7 +195,7 @@ class CommentViewModel: ObservableObject {
                 return
             }
             
-            postsRef.child(post.id.uuidString).child("comments").child(newComment.id.uuidString).setValue(json) { error, _ in
+            commentsRef.child(newComment.id.uuidString).setValue(json) { error, _ in
                 if let error = error {
                     completion(.failure(error))
                 } else {

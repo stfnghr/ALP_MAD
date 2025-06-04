@@ -103,7 +103,6 @@ struct PostDetailView: View {
 
                 Button(action: {
                     commentViewModel.addComment(commentText, to: post.id.uuidString)
-                    postViewModel.fetchComments(for: post.id.uuidString)
                     commentText = ""
                 }) {
                     Image(systemName: "paperplane.fill")
@@ -116,7 +115,7 @@ struct PostDetailView: View {
         }
         .padding()
         .onAppear {
-            postViewModel.fetchComments(for: post.id.uuidString)
+            commentViewModel.fetchComments(for: post.id.uuidString)
         }
         .alert(isPresented: .constant(commentViewModel.errorMessage != nil)) {
             Alert(

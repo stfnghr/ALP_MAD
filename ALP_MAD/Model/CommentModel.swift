@@ -12,4 +12,5 @@ struct CommentModel: Codable, Identifiable {
     var author: UserModel
     var text: String
     var commentDate: Date
+    var postId: String
 }
