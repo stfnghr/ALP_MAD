@@ -7,11 +7,10 @@ struct PostDetailView: View {
     var body: some View {
         VStack {
             ScrollView {
-                // Top HStack: Author, Date, Status
                 HStack {
                     VStack(alignment: .leading) {
                         Text(post.author.name)
-                        Text(postViewModel.postDateFormatter.string(from: post.postDate)) // MODIFIED
+                        Text(postViewModel.postDateFormatter.string(from: post.postDate))
                             .font(.caption2)
                     }
 
@@ -67,8 +66,8 @@ struct PostDetailView: View {
                     }
                     Spacer()
                     VStack(alignment: .trailing) {
-                        Text(postViewModel.commentDisplayDateFormatter.string(from: Date().addingTimeInterval(-3600*24))) // MODIFIED
-                        Text(postViewModel.commentDisplayTimeFormatter.string(from: Date().addingTimeInterval(-3600*2)))    // MODIFIED
+                        Text(postViewModel.commentDisplayDateFormatter.string(from: Date().addingTimeInterval(-3600*24)))
+                        Text(postViewModel.commentDisplayTimeFormatter.string(from: Date().addingTimeInterval(-3600*2)))
                     }
                     .font(.caption)
                     .foregroundColor(.gray)
@@ -76,7 +75,7 @@ struct PostDetailView: View {
 
                 Divider()
                     .padding()
-            } // End ScrollView
+            } 
 
             HStack {
                 TextField("Add a comment...", text: $commentText)
