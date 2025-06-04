@@ -5,7 +5,7 @@
 //  Created by Stefanie Agahari on 22/05/25.
 //
 
-// View Folder/MainView.swift
+
 import SwiftUI
 
 struct MainView: View {
@@ -22,7 +22,7 @@ struct MainView: View {
                         .tabItem {
                             Label("Home", systemImage: "house")
                         }
-                    Text("Placeholder for Create Post Tab")
+                    CreatePostView()
                         .tabItem {
                             Label("New Post", systemImage: "plus.square.fill")
                         }
