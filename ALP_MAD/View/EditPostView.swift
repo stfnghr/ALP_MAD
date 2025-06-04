@@ -1,7 +1,5 @@
 import SwiftUI
 
-// ItemStatus enum remains the same
-
 struct EditPostView: View {
     enum ItemStatus: String, CaseIterable {
         case lost = "LOST"
@@ -116,7 +114,7 @@ struct EditPostView: View {
                                     .foregroundColor(selectedStatus == .found ? Color.white : Color(UIColor.label).opacity(0.7))
                                     .padding(.horizontal, 30)
                                     .padding(.vertical, 5)
-                                    .frame(minWidth: 50) // Keep existing frame modifiers if they serve a purpose
+                                    .frame(minWidth: 50)
                                     .frame(minHeight: 0)
                                     .background(selectedStatus == .found ? Color(red: 0.48, green: 0.83, blue: 0.44) : Color(UIColor.systemGray4))
                                     .cornerRadius(8)
@@ -137,8 +135,8 @@ struct EditPostView: View {
 
     
                         let updatedPost = PostModel(
-                            id: originalPost.id, // Keep original ID
-                            author: originalPost.author, // Keep original author
+                            id: originalPost.id,
+                            author: originalPost.author,
                             itemName: itemName,
                             description: descriptionText,
                             location: lostLocation,
@@ -193,7 +191,7 @@ struct EditPostView: View {
                     message: Text(alertMessage),
                     dismissButton: .default(Text("OK")) {
                         if alertTitle == "Post Updated!" {
-                            presentationMode.wrappedValue.dismiss() // Dismiss after successful update alert
+                            presentationMode.wrappedValue.dismiss()
                         }
                     }
                 )
