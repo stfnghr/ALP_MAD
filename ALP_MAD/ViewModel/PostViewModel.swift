@@ -19,7 +19,7 @@ class PostViewModel: ObservableObject {
     @Published var userPosts: [PostModel] = [] // For "My Posts" view
 
     private var postsRef: DatabaseReference = Database.database().reference().child("posts")
-    private var usersRef: DatabaseReference = Database.database().reference().child("users") 
+    private var usersRef: DatabaseReference = Database.database().reference().child("users")
 
     var postDateFormatter: DateFormatter {
         let formatter = DateFormatter()
@@ -57,7 +57,7 @@ class PostViewModel: ObservableObject {
 
             var fetchedPosts: [PostModel] = []
             let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .secondsSince1970 
+            decoder.dateDecodingStrategy = .secondsSince1970
 
             for (_, postData) in value {
                 guard let postDict = postData as? [String: Any],
