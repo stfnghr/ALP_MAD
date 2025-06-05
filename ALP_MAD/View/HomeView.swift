@@ -3,17 +3,57 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var postViewModel: PostViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
-    @State private var selectedIndex = 0 // Basically use to check if its 'All Posts' or 'My Posts'
+    @State private var selectedIndex = 0  // Basically use to check if its 'All Posts' or 'My Posts'
     let options = ["All Posts", "My Posts"]
     @State private var showingCreatePostView = false
     @State private var showingEditPostView = false
     @State private var postToEdit: PostModel? = nil
     @State private var showingDeleteAlert = false
     @State private var postToDelete: PostModel? = nil
+    @State private var searchText = ""
+
+    var displayedPosts: [PostModel] {
+        let basePosts = selectedIndex == 0 ? postViewModel.posts : postViewModel.userPosts
+        if searchText.isEmpty {
+            return basePosts
+        } else {
+            return basePosts.filter { post in
+                let searchLowercased = searchText.localizedLowercase
+                
+                let itemNameMatches = post.itemName.localizedLowercase.contains(searchLowercased)
+                let authorMatches = post.author.name.localizedLowercase.contains(searchLowercased)
+                let descriptionMatches = post.description.localizedLowercase.contains(searchLowercased)
+                let locationMatches = post.location.localizedLowercase.contains(searchLowercased)
+
+                return itemNameMatches || authorMatches || descriptionMatches || locationMatches
+            }
+        }
+    }
 
     var body: some View {
         NavigationStack {
-            VStack {
+            VStack(spacing: 0) {
+                            HStack {
+                                Image(systemName: "magnifyingglass")
+                                    .foregroundColor(.gray)
+                                TextField("Search posts...", text: $searchText)
+                                    .textFieldStyle(PlainTextFieldStyle())
+                                    .submitLabel(.search)
+                                if !searchText.isEmpty {
+                                    Button(action: {
+                                        self.searchText = ""
+                                    }) {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                            }
+                            .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
+                            .background(Color(.systemGray6))
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+                            .padding(.top, 10)
+                            .padding(.bottom, 10)
                 Picker("Filter Posts", selection: $selectedIndex) {
                     ForEach(0..<options.count, id: \.self) { index in
                         Text(options[index])
@@ -21,12 +61,13 @@ struct HomeView: View {
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding()
-                .onChange(of: selectedIndex) { newIndex in
+                .onChange(of: selectedIndex) { newIndex, _ in
                     if newIndex == 0 {
                         postViewModel.fetchPosts()
                     } else if newIndex == 1 {
                         postViewModel.fetchUserPosts()
                     }
+                    searchText = ""
                 }
 
                 if postViewModel.isLoading && (selectedIndex == 0 ? postViewModel.posts.isEmpty : postViewModel.userPosts.isEmpty) {
@@ -40,17 +81,20 @@ struct HomeView: View {
                 }
 
                 ScrollView {
-                    let postsToDisplay = selectedIndex == 0 ? postViewModel.posts : postViewModel.userPosts
-                    
-                    if postsToDisplay.isEmpty && !postViewModel.isLoading {
-                        Text(selectedIndex == 0 ? "No posts available yet." : "You haven't created any posts yet.")
-                            .foregroundColor(.gray)
-                            .padding(.top, 50)
+                    if self.displayedPosts.isEmpty && !postViewModel.isLoading {
+                        if !searchText.isEmpty {
+                            Text("No posts found matching \"\(searchText)\".")
+                                .foregroundColor(.gray)
+                                .padding(.top, 50)
+                        } else {
+                            Text(selectedIndex == 0 ? "No posts available yet." : "You haven't created any posts yet.")
+                                .foregroundColor(.gray)
+                                .padding(.top, 50)
+                        }
                     } else {
                         LazyVStack(spacing: 16) {
-                            ForEach(postsToDisplay) { post in
-
-                                VStack { // Wrap Card and Edit button
+                            ForEach(self.displayedPosts) { post in
+                                VStack {
                                     NavigationLink(destination: PostDetailView(post: post, commentViewModel: CommentViewModel())
                                         .environmentObject(authViewModel)
                                         .environmentObject(postViewModel)
@@ -58,7 +102,6 @@ struct HomeView: View {
                                         HomeCardView(post: post)
                                     }
                                     .buttonStyle(PlainButtonStyle())
-
                         
                                     if selectedIndex == 1 {
                                         HStack(spacing: 10) {
@@ -87,7 +130,7 @@ struct HomeView: View {
                                                     .background(Color.red)
                                                     .cornerRadius(8)
                                             }
-                                            Spacer() 
+                                            Spacer()
                                         }
                                         .padding(.top, 4)
                                     }
@@ -123,13 +166,14 @@ struct HomeView: View {
                         postViewModel.fetchPosts()
                     }
                 } else if selectedIndex == 1 {
-                     postViewModel.fetchUserPosts()
+                     if postViewModel.userPosts.isEmpty && !postViewModel.isLoading {
+                         postViewModel.fetchUserPosts()
+                     }
                 }
             }
     
     }
 }
-
 
 #Preview {
     HomeView()
