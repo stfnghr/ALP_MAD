@@ -12,6 +12,7 @@ import FirebaseAuth
 class UserViewModel: ObservableObject {
     @Published var userResponse: UserResponseModel = UserResponseModel()
     @Published var myUser: UserModel = UserModel()
+    @Published var userUpdated: Bool = false
     
     func fetchUser() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
@@ -43,8 +44,10 @@ class UserViewModel: ObservableObject {
         ref.updateChildValues(updatedData) { error, _ in
             if let error = error {
                 print("Failed to update user: \(error.localizedDescription)")
+                self.userUpdated = false
             } else {
                 print("Successfully updated user data")
+                self.userUpdated = true
             }
         }
     }
