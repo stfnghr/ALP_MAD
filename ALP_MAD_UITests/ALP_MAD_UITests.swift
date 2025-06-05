@@ -29,6 +29,25 @@ final class ALP_MAD_UITests: XCTestCase {
         app.launch()
 
         // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let addCommentButton = app.buttons["addCommentButton"]
+        XCTAssertTrue(addCommentButton.exists)
+        addCommentButton.tap()
+        
+        let commentField = app.textFields["commentTextField"]
+        XCTAssertTrue(commentField.exists)
+        commentField.tap()
+        commentField.typeText("Test Comment")
+        
+        // add more testing for each features guys :D
+        
+        app.swipeUp()
+        app.swipeUp()
+        app.keyboards.buttons["return"].tap()
+        sleep(1)
+        
+        // saveButton.tap() -> uncomment this when u're done adding saveButton
+        
+        XCTAssertFalse(commentField.exists)
     }
 
     @MainActor
