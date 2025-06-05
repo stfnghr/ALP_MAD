@@ -12,10 +12,11 @@
 		3FC3127C2DE5A44D003566FB /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3FC3127B2DE5A44D003566FB /* FirebaseAuth */; };
 		3FC3127E2DE5A44D003566FB /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3FC3127D2DE5A44D003566FB /* FirebaseCore */; };
 		3FC312802DE5A44D003566FB /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 3FC3127F2DE5A44D003566FB /* FirebaseDatabase */; };
+		3FE49A262DF1821200FD7073 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FE49A252DF1821200FD7073 /* XCTest.framework */; platformFilter = ios; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		3FF66B692DF17B5F00ACFCEA /* PBXContainerItemProxy */ = {
+		3FE49A132DF17B1D00FD7073 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3FD972382DDEBD4700B3D542 /* Project object */;
 			proxyType = 1;
@@ -26,13 +27,15 @@
 
 /* Begin PBXFileReference section */
 		3FD972402DDEBD4700B3D542 /* ALP_MAD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ALP_MAD.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3FF66B652DF17B5F00ACFCEA /* ALP_MADTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ALP_MADTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3FE49A0F2DF17B1D00FD7073 /* ALP_MADTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ALP_MADTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3FE49A252DF1821200FD7073 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		3FF66B772DF188F400ACFCEA /* Exceptions for "ALP_MAD" folder in "ALP_MADTests" target */ = {
+		3FE49A232DF181C600FD7073 /* Exceptions for "ALP_MAD" folder in "ALP_MADTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				ALP_MADApp.swift,
 				Model/CommentModel.swift,
 				Model/PostModel.swift,
 				Model/UserModel.swift,
@@ -50,7 +53,7 @@
 				ViewModel/PostViewModel.swift,
 				ViewModel/UserViewModel.swift,
 			);
-			target = 3FF66B642DF17B5F00ACFCEA /* ALP_MADTests */;
+			target = 3FE49A0E2DF17B1D00FD7073 /* ALP_MADTests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -58,12 +61,12 @@
 		3FD972422DDEBD4700B3D542 /* ALP_MAD */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				3FF66B772DF188F400ACFCEA /* Exceptions for "ALP_MAD" folder in "ALP_MADTests" target */,
+				3FE49A232DF181C600FD7073 /* Exceptions for "ALP_MAD" folder in "ALP_MADTests" target */,
 			);
 			path = ALP_MAD;
 			sourceTree = "<group>";
 		};
-		3FF66B662DF17B5F00ACFCEA /* ALP_MADTests */ = {
+		3FE49A102DF17B1D00FD7073 /* ALP_MADTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ALP_MADTests;
 			sourceTree = "<group>";
@@ -83,10 +86,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3FF66B622DF17B5F00ACFCEA /* Frameworks */ = {
+		3FE49A0C2DF17B1D00FD7073 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3FE49A262DF1821200FD7073 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,7 +101,8 @@
 			isa = PBXGroup;
 			children = (
 				3FD972422DDEBD4700B3D542 /* ALP_MAD */,
-				3FF66B662DF17B5F00ACFCEA /* ALP_MADTests */,
+				3FE49A102DF17B1D00FD7073 /* ALP_MADTests */,
+				3FE49A242DF1821200FD7073 /* Frameworks */,
 				3FD972412DDEBD4700B3D542 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -106,9 +111,17 @@
 			isa = PBXGroup;
 			children = (
 				3FD972402DDEBD4700B3D542 /* ALP_MAD.app */,
-				3FF66B652DF17B5F00ACFCEA /* ALP_MADTests.xctest */,
+				3FE49A0F2DF17B1D00FD7073 /* ALP_MADTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		3FE49A242DF1821200FD7073 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3FE49A252DF1821200FD7073 /* XCTest.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -141,27 +154,27 @@
 			productReference = 3FD972402DDEBD4700B3D542 /* ALP_MAD.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3FF66B642DF17B5F00ACFCEA /* ALP_MADTests */ = {
+		3FE49A0E2DF17B1D00FD7073 /* ALP_MADTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3FF66B6B2DF17B5F00ACFCEA /* Build configuration list for PBXNativeTarget "ALP_MADTests" */;
+			buildConfigurationList = 3FE49A152DF17B1D00FD7073 /* Build configuration list for PBXNativeTarget "ALP_MADTests" */;
 			buildPhases = (
-				3FF66B612DF17B5F00ACFCEA /* Sources */,
-				3FF66B622DF17B5F00ACFCEA /* Frameworks */,
-				3FF66B632DF17B5F00ACFCEA /* Resources */,
+				3FE49A0B2DF17B1D00FD7073 /* Sources */,
+				3FE49A0C2DF17B1D00FD7073 /* Frameworks */,
+				3FE49A0D2DF17B1D00FD7073 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				3FF66B6A2DF17B5F00ACFCEA /* PBXTargetDependency */,
+				3FE49A142DF17B1D00FD7073 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				3FF66B662DF17B5F00ACFCEA /* ALP_MADTests */,
+				3FE49A102DF17B1D00FD7073 /* ALP_MADTests */,
 			);
 			name = ALP_MADTests;
 			packageProductDependencies = (
 			);
 			productName = ALP_MADTests;
-			productReference = 3FF66B652DF17B5F00ACFCEA /* ALP_MADTests.xctest */;
+			productReference = 3FE49A0F2DF17B1D00FD7073 /* ALP_MADTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -177,7 +190,7 @@
 					3FD9723F2DDEBD4700B3D542 = {
 						CreatedOnToolsVersion = 16.2;
 					};
-					3FF66B642DF17B5F00ACFCEA = {
+					3FE49A0E2DF17B1D00FD7073 = {
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = 3FD9723F2DDEBD4700B3D542;
 					};
@@ -201,7 +214,7 @@
 			projectRoot = "";
 			targets = (
 				3FD9723F2DDEBD4700B3D542 /* ALP_MAD */,
-				3FF66B642DF17B5F00ACFCEA /* ALP_MADTests */,
+				3FE49A0E2DF17B1D00FD7073 /* ALP_MADTests */,
 			);
 		};
 /* End PBXProject section */
@@ -214,7 +227,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3FF66B632DF17B5F00ACFCEA /* Resources */ = {
+		3FE49A0D2DF17B1D00FD7073 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -231,7 +244,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3FF66B612DF17B5F00ACFCEA /* Sources */ = {
+		3FE49A0B2DF17B1D00FD7073 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -241,10 +254,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3FF66B6A2DF17B5F00ACFCEA /* PBXTargetDependency */ = {
+		3FE49A142DF17B1D00FD7073 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3FD9723F2DDEBD4700B3D542 /* ALP_MAD */;
-			targetProxy = 3FF66B692DF17B5F00ACFCEA /* PBXContainerItemProxy */;
+			targetProxy = 3FE49A132DF17B1D00FD7073 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -424,7 +437,7 @@
 			};
 			name = Release;
 		};
-		3FF66B6C2DF17B5F00ACFCEA /* Debug */ = {
+		3FE49A162DF17B1D00FD7073 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -432,7 +445,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "IMT-Turu.ALP-MADTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "IMT-turu.ALP-MADTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -441,7 +454,7 @@
 			};
 			name = Debug;
 		};
-		3FF66B6D2DF17B5F00ACFCEA /* Release */ = {
+		3FE49A172DF17B1D00FD7073 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -449,7 +462,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "IMT-Turu.ALP-MADTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "IMT-turu.ALP-MADTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -479,11 +492,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3FF66B6B2DF17B5F00ACFCEA /* Build configuration list for PBXNativeTarget "ALP_MADTests" */ = {
+		3FE49A152DF17B1D00FD7073 /* Build configuration list for PBXNativeTarget "ALP_MADTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3FF66B6C2DF17B5F00ACFCEA /* Debug */,
-				3FF66B6D2DF17B5F00ACFCEA /* Release */,
+				3FE49A162DF17B1D00FD7073 /* Debug */,
+				3FE49A172DF17B1D00FD7073 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

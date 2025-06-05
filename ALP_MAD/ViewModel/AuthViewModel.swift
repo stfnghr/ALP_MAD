@@ -36,13 +36,9 @@ class AuthViewModel: ObservableObject {
     func signIn() async {
         do {
             _ = try await Auth.auth().signIn(withEmail: myUser.email, password: myUser.password)
-            DispatchQueue.main.async {
                 self.falseCredential = false
-            }
         } catch {
-            DispatchQueue.main.async {
                 self.falseCredential = true
-            }
         }
     }
 
@@ -73,6 +69,10 @@ class AuthViewModel: ObservableObject {
             print("Firebase Auth Error - Code: \(nsError.code), Domain: \(nsError.domain), Message: \(nsError.localizedDescription)")
             self.falseCredential = true
         }
+    }
+    
+    func resetForm() {
+        myUser = UserModel(name: "", nim: "", email: "", password: "", phoneNumber: "")
     }
 }
 
