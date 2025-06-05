@@ -97,6 +97,7 @@ struct PostDetailView: View {
             // Comment Input
             HStack {
                 TextField("Add a comment...", text: $commentText)
+                    .accessibilityIdentifier("commentTextField")
                     .padding(10)
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(10)
@@ -110,6 +111,7 @@ struct PostDetailView: View {
                         .padding(.leading, 5)
                 }
                 .disabled(commentText.isEmpty)
+                .accessibilityIdentifier("addCommentButton")
             }
             .padding()
         }

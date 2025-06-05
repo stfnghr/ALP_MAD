@@ -24,7 +24,6 @@ class CommentViewModel: ObservableObject {
 //        return encoder
 //    }()
     
-    // MARK: - Date Formatters
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM dd, yy"
@@ -36,8 +35,6 @@ class CommentViewModel: ObservableObject {
         formatter.dateFormat = "h:mm a"
         return formatter
     }()
-    
-    // MARK: - Public Methods
     
     func addComment(_ text: String, to postId: String) {
         guard !text.isEmpty else {
@@ -54,17 +51,17 @@ class CommentViewModel: ObservableObject {
         commentCreationSuccess = false
         errorMessage = nil
         
-        // 1. Fetch post details
+        // post details
         fetchPost(postId: postId) { [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let post):
-                // 2. Fetch or create user details
+                // create user details
                 self.fetchUserDetails(user: user) { userResult in
                     switch userResult {
                     case .success(let userDetails):
-                        // 3. Create and save comment
+                        // create and save comment
                         self.saveComment(
                             text: text,
                             post: post,
@@ -111,15 +108,12 @@ class CommentViewModel: ObservableObject {
                 }
 
                 do {
-                    // Convert the values (each comment) into JSON data
                     let commentsData = try JSONSerialization.data(
                         withJSONObject: Array(commentsDict.values))
                     
-                    // Decode JSON into [CommentModel]
                     let comments = try self.decoder.decode(
                         [CommentModel].self, from: commentsData)
 
-                    // Sort comments by date descending
                     self.comments = comments.sorted {
                         $0.commentDate > $1.commentDate
                     }
@@ -129,8 +123,6 @@ class CommentViewModel: ObservableObject {
                 }
             }
     }
-    
-    // MARK: - Private Methods
     
     private func fetchPost(postId: String, completion: @escaping (Result<PostModel, Error>) -> Void) {
         postsRef.child(postId).observeSingleEvent(of: .value) { snapshot in
@@ -162,7 +154,6 @@ class CommentViewModel: ObservableObject {
                 )
                 completion(.success(userDetails))
             } else {
-                // Fallback to basic auth info if user details not found
                 let userDetails = UserModel(
                     name: user.displayName ?? "Anonymous",
                     nim: "",
