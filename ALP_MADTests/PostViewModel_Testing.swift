@@ -7,29 +7,128 @@
 
 import XCTest
 
+
 final class PostViewModel_Testing: XCTestCase {
-
+    private var viewmModel: PostViewModel!
+    
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        self.viewmModel = PostViewModel()
     }
-
+    
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        self.viewmModel = nil
+    }
+    
+    // FetchPosts
+    func testFetchPosts() throws {
+        let expectation = XCTestExpectation(description: "Fetch Posts From Firebase and expect posts array not to be empty")
+        
+        self.viewmModel.fetchPosts()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            XCTAssertFalse(
+                self.viewmModel.posts.isEmpty,
+                "Posts array should not be empty after fetching. Check Firebase data at '/posts'."
+            )
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5.0)
+    }
+    
+    //FetchUsersPosts
+    func testFetchUserPosts() throws {
+        let expectation = XCTestExpectation(description: "Fetch User's Posts From Firebase and expect posts array not to be empty")
+        
+        self.viewmModel.fetchUserPosts()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            XCTAssertFalse(
+                self.viewmModel.userPosts.isEmpty,
+                "userPosts array should not be empty after fetching."
+            )
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 5.0)
+    }
+    
+    //AddPost
+    func testAddPost() throws {
+        let expectation = XCTestExpectation(description: "Add a new post and check for success")
+        
+        self.viewmModel.addPost(
+            itemName: "Kori's Laptop",
+            description: "Lost black MacBook Pro, 13-inch, M1 chip.",
+            location: "University Library, 2nd Floor",
+            status: true
+        )
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) { // Using a 4-second delay, adjust if needed
+            XCTAssertTrue(
+                self.viewmModel.postCreationSuccess,
+                "postCreationSuccess should be true after successfully adding a post. Ensure a user is authenticated. Error: \(self.viewmModel.errorMessage ?? "No error message")"
+            )
+            expectation.fulfill()
+        }
+        
+        wait(for: [expectation], timeout: 6.0)
+    }
+    
+    //DeletePost
+    func testDeletePost() throws {
+        let expectation = XCTestExpectation(description: "Attempt to delete a user's post and check for success")
+        
+        self.viewmModel.fetchUserPosts()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+            guard let postToDelete = self.viewmModel.userPosts.first else {
+                XCTFail("Prerequisite not met: No user posts found to delete. Ensure the test user is authenticated and has at least one post.")
+                expectation.fulfill()
+                return
+            }
+            
+            self.viewmModel.deletePost(post: postToDelete)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                XCTAssertTrue(
+                    self.viewmModel.postDeletionSuccess,
+                    "postDeletionSuccess should be true after successfully deleting a post. Error: \(self.viewmModel.errorMessage ?? "No error message")"
+                )
+                expectation.fulfill()
+            }
+        }
+        
+        wait(for: [expectation], timeout: 10.0)
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
+func testUpdatePost() throws {
+    let expectation = XCTestExpectation(description: "Update a User's posts")
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    self.viewmModel.fetchUserPosts()
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+        guard var postToUpdate = self.viewmModel.userPosts.first else {
+            XCTFail("No user posts found to update.")
+            expectation.fulfill()
+            return
+        }
+
+        let originalItemName = postToUpdate.itemName
+        let updatedItemName = "UPDATED: \(originalItemName) \(Int.random(in: 1...100))"
+        postToUpdate.itemName = updatedItemName
+
+        self.viewmModel.updatePost(post: postToUpdate)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            XCTAssertTrue(
+                self.viewmModel.postUpdateSuccess,
+                "postUpdateSuccess should be true after successfully updating a post. Error: \(self.viewmModel.errorMessage ?? "No error message")"
+            )
+            expectation.fulfill()
         }
     }
-
+    
+    wait(for: [expectation], timeout: 10.0)
 }
+    }
