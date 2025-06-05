@@ -1,144 +1,146 @@
 import SwiftUI
 
 struct PostDetailView: View {
-    let post: PostModel // Functionality: Still takes a PostModel
-    @State private var commentText: String = "" // Functionality: For comment input
-
-    // Date formatter to match "May 22, 2025 10:00 AM"
-    private var postDateFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM dd, yyyy h:mm a"
-        return formatter
-    }
-
-    // Date formatters for the example comment section
-    private var commentDisplayDateFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM dd, yyyy"
-        return formatter
-    }
-
-    private var commentDisplayTimeFormatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm a"
-        return formatter
-    }
-
+    let post: PostModel
+    @State private var commentText: String = ""
+    @EnvironmentObject var postViewModel: PostViewModel
+    @ObservedObject var commentViewModel: CommentViewModel
+    
     var body: some View {
-        VStack { // Matches target design's root VStack
+        VStack {
             ScrollView {
-                // Top HStack: Author, Date, Status
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(post.author.name) // Dynamic data
-                        Text(postDateFormatter.string(from: post.postDate)) // Dynamic data
-                            .font(.caption2) // Matches target design
+                        Text(post.author.name)
+                        Text(postViewModel.postDateFormatter.string(from: post.postDate))
+                            .font(.caption2)
                     }
 
                     Spacer()
 
-                    Text(post.status ? "LOST" : "FOUND") // Dynamic data
-                        .frame(width: 80, height: 35) // Matches target design
-                        .background(post.status ? Color(red: 1.0, green: 0.66, blue: 0.66) : Color.green.opacity(0.7)) // Dynamic background
-                        .foregroundColor(.white) // Matches target design
-                        .font(.headline) // Matches target design
-                        .fontWeight(.bold) // Matches target design
-                        .cornerRadius(10) // Matches target design
+                    Text(post.status ? "LOST" : "FOUND")
+                        .frame(width: 80, height: 35)
+                        .background(post.status ? Color(red: 1.0, green: 0.66, blue: 0.66) : Color.green.opacity(0.7))
+                        .foregroundColor(.white)
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .cornerRadius(10)
                 }
 
-                // Image placeholder - matches target design structure
-                // Target used Image("image"), we use a system placeholder
-                Image("Image") // Placeholder
+                Image("Image")
                     .resizable()
-                    .scaledToFit() // Ensure placeholder scales reasonably
-                    .frame(width: 350, height: 350) // Matches target design
-                    .foregroundColor(Color(UIColor.systemGray3)) // Placeholder color
-                    .overlay( // Matches target design
+                    .scaledToFit()
+                    .frame(width: 350, height: 350)
+                    .foregroundColor(Color(UIColor.systemGray3))
+                    .overlay(
                         RoundedRectangle(cornerRadius: 20)
                             .stroke(Color.gray, lineWidth: 0.5)
                     )
-                    .padding() // Matches target design
+                    .padding()
 
-                // Item Info VStack - matches target design structure
                 VStack(alignment: .leading) {
-                    Text(post.itemName) // Dynamic data. Target had "Item Name"
+                    Text(post.itemName)
                     HStack {
-                        Image(systemName: "location") // Matches target design
-                        Text(post.location) // Dynamic data. Target had "Location"
-                            .font(.caption) // Matches target design
+                        Image(systemName: "location")
+                        Text(post.location)
+                            .font(.caption)
                     }
-                    Text(post.description) // Dynamic data. Target had "Description"
-                        .font(.caption) // Matches target design
+                    Text(post.description)
+                        .font(.caption)
                 }
-                .frame(maxWidth: .infinity, alignment: .leading) // Matches target design
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                Divider() // Matches target design
-                    .padding() // Matches target design
+                Divider()
+                    .padding()
 
-                // Comments Header HStack - matches target design structure
+                // Comments Section
                 HStack {
-                    Image(systemName: "ellipsis.message") // Matches target design
-                    Text("Comments") // Matches target design
+                    Image(systemName: "ellipsis.message")
+                    Text("Comments")
                 }
-                .frame(maxWidth: .infinity, alignment: .leading) // Matches target design
-                .padding(.bottom, 20) // Matches target design
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 20)
 
-                // Example Comment HStack - matches target design structure (static example for now)
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("User Name") // Static example from target
-                        Text("Comment") // Static example from target
-                            .font(.caption) // Matches target design
+                // Comments List
+                if commentViewModel.isLoading {
+                    ProgressView()
+                        .padding()
+                } else if commentViewModel.comments.isEmpty {
+                    Text("No comments yet")
+                        .foregroundColor(.gray)
+                        .font(.caption)
+                        .padding()
+                } else {
+                    ForEach(commentViewModel.comments) { comment in
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading) {
+                                Text(comment.author.name)
+                                    .font(.subheadline)
+                                Text(comment.text)
+                                    .font(.caption)
+                            }
+                            Spacer()
+                            VStack(alignment: .trailing) {
+                                Text(postViewModel.commentDisplayDateFormatter.string(from: comment.commentDate))
+                                Text(postViewModel.commentDisplayTimeFormatter.string(from: comment.commentDate))
+                            }
+                            .font(.caption2)
+                            .foregroundColor(.gray)
+                        }
+                        .padding(.vertical, 4)
+                        
+                        Divider()
                     }
-                    Spacer()
-                    VStack(alignment: .trailing) {
-                        // Using example date/time values for layout consistency
-                        Text(commentDisplayDateFormatter.string(from: Date().addingTimeInterval(-3600*24))) // Example: "May 29, 2025"
-                        Text(commentDisplayTimeFormatter.string(from: Date().addingTimeInterval(-3600*2)))    // Example: "2:56 AM"
-                    }
-                    .font(.caption) // Matches target design
-                    .foregroundColor(.gray) // Matches target design
                 }
-
-                Divider() // Matches target design
-                    .padding() // Matches target design
             } // End ScrollView
 
-            // Comment Input HStack - matches target design structure
+            // Comment Input
             HStack {
-                TextField("Add a comment...", text: $commentText) // Functionality: binding
-                    .padding(10) // Matches target design
-                    .background(Color(UIColor.systemGray6)) // Matches target design
-                    .cornerRadius(10) // Matches target design
+                TextField("Add a comment...", text: $commentText)
+                    .padding(10)
+                    .background(Color(UIColor.systemGray6))
+                    .cornerRadius(10)
 
                 Button(action: {
-                    // Functionality: print and clear
-                    print("Submitted comment: \(commentText) for post ID: \(post.id)")
+                    commentViewModel.addComment(commentText, to: post.id.uuidString)
                     commentText = ""
                 }) {
-                    Image(systemName: "paperplane.fill") // Matches target design
-                        .foregroundColor(commentText.isEmpty ? .gray : .orange) // Retained dynamic color
-                        .padding(.leading, 5) // Matches target design
+                    Image(systemName: "paperplane.fill")
+                        .foregroundColor(commentText.isEmpty ? .gray : .orange)
+                        .padding(.leading, 5)
                 }
-                .disabled(commentText.isEmpty) // Retained disabled state
+                .disabled(commentText.isEmpty)
             }
+            .padding()
         }
-        .padding() // Matches target design's root VStack padding
-        // Note: The target design did not show a .navigationTitle for PostDetailView itself
+        .padding()
+        .onAppear {
+            commentViewModel.fetchComments(for: post.id.uuidString)
+        }
+        .alert(isPresented: .constant(commentViewModel.errorMessage != nil)) {
+            Alert(
+                title: Text("Error"),
+                message: Text(commentViewModel.errorMessage ?? "Unknown error"),
+                dismissButton: .default(Text("OK")) {
+                    commentViewModel.errorMessage = nil
+                }
+            )
+        }
     }
 }
 
 #Preview {
-    // The target design's preview was PostDetailView()
-    // To make our dynamic view work in preview, we provide a sample PostModel
-    NavigationView { // Wrapping in NavigationView for better preview context
+    NavigationView {
         PostDetailView(post: PostModel(
-            author: UserModel(name: "Preview User", email: "preview@example.com", password: ""), // Ensure UserModel can be init'd
+            author: UserModel(name: "Preview User", email: "preview@example.com", password: ""),
             itemName: "Sample Item Name",
             description: "This is a sample description of the item.",
             location: "Sample Location",
             postDate: Date(),
-            status: true // true for LOST, false for FOUND
-        ))
+            status: true
+        ), commentViewModel: CommentViewModel())
+        .environmentObject(PostViewModel())
+        .environmentObject(CommentViewModel())
+        .environmentObject(AuthViewModel())
     }
 }
