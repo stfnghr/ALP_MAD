@@ -9,7 +9,7 @@ import XCTest
 
 final class CommentViewModelTesting: XCTestCase {
 
-    private var viewModel: CommentViewModel!
+    private var viewModel = CommentViewModel!
 
     override func setUpWithError() throws {
         self.viewModel = CommentViewModel()
@@ -23,8 +23,8 @@ final class CommentViewModelTesting: XCTestCase {
         let expectation = XCTestExpectation(
             description: "Fetch comments from Firebase"
         )
-        
-        self.viewModel.fetchComments() {
+
+        self.viewModel.fetchComments {
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 XCTAssertFalse(
                     self.viewModel.comments.isEmpty,
@@ -32,29 +32,29 @@ final class CommentViewModelTesting: XCTestCase {
                 )
                 expectation.fulfill()
             }
-            
+
             wait(for: [expectation], timeout: 5.0)
-        }
-        
-        func testAddComment() throws {
-            let comment = CommentModel(
-                author: "abcde",
-                text: "Hello World",
-                commentDate: Date(),
-                postId: ""
-            )
-            
-            let result = viewModel.addComment(comment: comment)
-            
-            XCTAssertTrue(result, "addComment should return true for valid input")
         }
     }
 
-//    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-//        self.measure {
-            // Put the code you want to measure the time of here.
-//        }
-//    }
+    func testAddComment() throws {
+        let comment = CommentModel(
+            author: "abcde",
+            text: "Hello World",
+            commentDate: Date(),
+            postId: ""
+        )
+
+        let result = viewModel.addComment(comment: comment)
+
+        XCTAssertTrue(result, "addComment should return true for valid input")
+    }
+
+    func testPerformanceExample() throws {
+        //     This is an example of a performance test case.
+        self.measure {
+            //     Put the code you want to measure the time of here.
+        }
+    }
 
 }
