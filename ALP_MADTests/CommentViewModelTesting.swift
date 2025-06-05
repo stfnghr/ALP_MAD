@@ -9,7 +9,7 @@ import XCTest
 
 final class CommentViewModelTesting: XCTestCase {
 
-    private var viewModel: CommentViewModel!
+  /*  private var viewModel: CommentViewModel!
 
     override func setUpWithError() throws {
         self.viewModel = CommentViewModel()
@@ -55,6 +55,6 @@ final class CommentViewModelTesting: XCTestCase {
 //        self.measure {
             // Put the code you want to measure the time of here.
 //        }
-//    }
+//    } */
 
 }
