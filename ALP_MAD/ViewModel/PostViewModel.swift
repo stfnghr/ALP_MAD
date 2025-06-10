@@ -203,6 +203,7 @@ class PostViewModel: NSObject, ObservableObject, WCSessionDelegate {
                 }
             }
             self.userPosts = fetchedUserPosts.sorted(by: { $0.postDate > $1.postDate })
+            print("Firebase: Fetched \(userPosts.count) user posts.")
             self.errorMessage = nil
             self.sendPostsToWatch()
         } withCancel: { [weak self] error in

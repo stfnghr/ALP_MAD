@@ -103,7 +103,7 @@ struct PostDetailView: View {
                     .cornerRadius(10)
 
                 Button(action: {
-                    commentViewModel.addComment(commentText, to: post.id.uuidString)
+                    commentViewModel.addComment(text: commentText, to: post.id.uuidString)
                     commentText = ""
                 }) {
                     Image(systemName: "paperplane.fill")
