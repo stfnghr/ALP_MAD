@@ -8,6 +8,6 @@
 import Foundation
 import WatchConnectivity
 
-class iOSConnectivity: NSObject, WCSessionDelegate, ObservableObject {
-    
-}
+/*class iOSConnectivity: NSObject, WCSessionDelegate, ObservableObject {
+ 
+}*/

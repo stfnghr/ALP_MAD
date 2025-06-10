@@ -41,18 +41,22 @@ final class PostViewModel_Testing: XCTestCase {
     }
     
     //FetchUsersPosts
-    func testFetchUserPosts() async throws {
-        let expectation = XCTestExpectation(description: "Fetch User's Posts From Firebase and expect posts array not to be empty")
-        self.authVM.myUser.email = "t@t.com"
-        self.authVM.myUser.password = "123456"
+    func testFetchUserPosts() throws {
+           let expectation = XCTestExpectation(description: "Fetch User's Posts From Firebase and expect posts array not to be empty")
+           
+           self.viewmModel.fetchUserPosts()
+           
+           DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+               XCTAssertFalse(
+                   self.viewmModel.userPosts.isEmpty,
+                   "userPosts array should not be empty after fetching."
+               )
+               expectation.fulfill()
+           }
+           
+           wait(for: [expectation], timeout: 120.0)
+       }
 
-        await self.authVM.signIn()
-        
-        self.viewmModel.fetchPosts()
-        self.viewmModel.fetchUserPosts()
-        
-        XCTAssertFalse(self.viewmModel.userPosts.isEmpty, "userPosts array should not be empty after fetching.")
-    }
     
     //AddPost
     func testAddPost() throws {
