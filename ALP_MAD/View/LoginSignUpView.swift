@@ -49,6 +49,12 @@ struct LoginSignUpView: View {
                                 .padding()
                                 .background(Color(.systemGray6))
                                 .cornerRadius(25)
+                            
+                            if authVM.falseCredential {
+                                Text("Invalid Username and Password")
+                                    .fontWeight(.medium)
+                                    .foregroundColor(Color.red)
+                            }
                         }
                         
                         // Sign Up text
@@ -78,6 +84,8 @@ struct LoginSignUpView: View {
                                 authVM.checkUserSession()
                                 showAuthSheet = !authVM.isSignedIn
                                 authVM.myUser = UserModel()
+                            } else {
+                                authVM.resetForm()
                             }
                         }
                     }) {
@@ -158,7 +166,7 @@ struct LoginSignUpView: View {
                                 .foregroundColor(Color.red)*/
                             
                             if authVM.falseCredential {
-                                Text("Invalid Username and Password")
+                                Text("Invalid Username or Password")
                                     .fontWeight(.medium)
                                     .foregroundColor(Color.red)
                             }
