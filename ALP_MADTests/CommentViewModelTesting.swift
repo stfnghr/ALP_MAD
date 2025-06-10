@@ -36,7 +36,7 @@ final class CommentViewModelTesting: XCTestCase {
             wait(for: [expectation], timeout: 5.0)
         }
     }
-
+  
     func testAddComment() throws {
         let comment = CommentModel(
             author: "abcde",
@@ -56,5 +56,4 @@ final class CommentViewModelTesting: XCTestCase {
             //     Put the code you want to measure the time of here.
         }
     }
-
 }
