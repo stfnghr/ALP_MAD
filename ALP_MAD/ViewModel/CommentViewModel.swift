@@ -9,151 +9,133 @@ class CommentViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var commentCreationSuccess = false
 
-    private let postsRef = Database.database().reference().child("posts")
-    private let usersRef = Database.database().reference().child("users")
     private let commentsRef = Database.database().reference().child("comments")
+    private let usersRef = Database.database().reference().child("users")
     private let decoder = JSONDecoder()
-    private let encoder = JSONEncoder()
 
     // MARK: - Intentions
 
-    func addComment(_ text: String, to postId: String) async {
-        guard let user = Auth.auth().currentUser else {
-            errorMessage = "User not authenticated"
+    func addComment(text: String, to postId: String) {
+        self.isLoading = true
+        self.commentCreationSuccess = false
+        self.errorMessage = nil
+
+        guard let firebaseUser = Auth.auth().currentUser else {
+            self.errorMessage = "User not authenticated. Please log in to comment."
+            self.isLoading = false
             return
         }
         
         guard !text.isEmpty else {
-            errorMessage = "Comment cannot be empty"
+            self.errorMessage = "Comment cannot be empty"
+            self.isLoading = false
             return
         }
 
-        isLoading = true
-        errorMessage = nil
-        commentCreationSuccess = false
-        
-        defer { isLoading = false }
+        // 1. Fetch user details first, just like in PostViewModel
+        usersRef.child(firebaseUser.uid).observeSingleEvent(of: .value) { [weak self] snapshot in
+            guard let self = self else { return }
 
-        do {
-            // The high-level logic remains clean and sequential
-            async let author = fetchUserDetails(user: user)
-            async let post = fetchPost(postId: postId)
-            
+            // Determine author details from the snapshot or fallback to Auth info
+            let authorDetails: UserModel
+            if snapshot.exists(), let userData = snapshot.value as? [String: Any] {
+                authorDetails = UserModel(
+                    name: userData["name"] as? String ?? firebaseUser.displayName ?? "Anonymous",
+                    nim: userData["nim"] as? String ?? "",
+                    email: userData["email"] as? String ?? firebaseUser.email ?? "no-email@example.com",
+                    password: "", // Password should not be handled here
+                    phoneNumber: userData["phoneNumber"] as? String ?? ""
+                )
+            } else {
+                // Fallback if user is not in the 'users' table
+                authorDetails = UserModel(
+                    name: firebaseUser.displayName ?? "Anonymous",
+                    nim: "",
+                    email: firebaseUser.email ?? "no-email@example.com",
+                    password: "",
+                    phoneNumber: firebaseUser.phoneNumber ?? ""
+                )
+            }
+
+            // 2. Create the comment model
             let newComment = CommentModel(
-                author: try await author,
+                author: authorDetails,
                 text: text,
                 commentDate: Date(),
                 postId: postId
             )
-            
-            try await saveComment(newComment)
-            commentCreationSuccess = true
-            
-        } catch {
-            errorMessage = "Failed to post comment: \(error.localizedDescription)"
-        }
-    }
 
-    func fetchComments(for postId: String) async {
-        isLoading = true
-        errorMessage = nil
-        
-        defer { isLoading = false }
+            // 3. Encode the comment and save it (nested callback)
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .secondsSince1970
 
-        do {
-            // 1. Await the result from the database
-            let snapshot = try await commentsRef
-                .queryOrdered(byChild: "postId")
-                .queryEqual(toValue: postId)
-                .observeSingleEvent(of: .value)
-
-            guard snapshot.exists(), let commentsDict = snapshot.value as? [String: Any] else {
-                self.comments = []
+            guard let jsonData = try? encoder.encode(newComment),
+                  let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] else {
+                self.errorMessage = "Failed to encode comment data before saving."
+                self.isLoading = false
                 return
             }
 
-            // 2. Manually serialize and decode the data
-            let commentsData = try JSONSerialization.data(withJSONObject: Array(commentsDict.values))
-            let fetchedComments = try self.decoder.decode([CommentModel].self, from: commentsData)
-
-            self.comments = fetchedComments.sorted { $0.commentDate > $1.commentDate }
-
-        } catch {
-            errorMessage = "Failed to fetch comments: \(error.localizedDescription)"
-            print("Decoding error: \(error)")
+            self.commentsRef.child(newComment.id.uuidString).setValue(json) { [weak self] error, _ in
+                guard let self = self else { return }
+                self.isLoading = false
+                if let error = error {
+                    self.errorMessage = "Firebase: Failed to create comment: \(error.localizedDescription)"
+                    self.commentCreationSuccess = false
+                } else {
+                    self.commentCreationSuccess = true
+                    self.errorMessage = nil
+                    // Optionally, you might want to re-fetch comments here
+                }
+            }
+        } withCancel: { [weak self] error in
+            guard let self = self else { return }
+            self.isLoading = false
+            self.errorMessage = "Firebase: Failed to fetch author details for comment: \(error.localizedDescription)"
         }
     }
 
-    // MARK: - Private Helper Functions (Async without FirebaseDatabaseSwift)
+    func fetchComments(for postId: String) {
+        self.isLoading = true
+        self.errorMessage = nil
 
-    private func fetchPost(postId: String) async throws -> PostModel {
-        try await withCheckedThrowingContinuation { continuation in
-            postsRef.child(postId).observeSingleEvent(of: .value) { snapshot in
-                guard snapshot.exists(), let postData = snapshot.value else {
-                    continuation.resume(throwing: NSError(domain: "AppError", code: 404, userInfo: [NSLocalizedDescriptionKey: "Post not found"]))
+        commentsRef
+            .queryOrdered(byChild: "postId")
+            .queryEqual(toValue: postId)
+            .observeSingleEvent(of: .value) { [weak self] snapshot in
+                guard let self = self else { return }
+                self.isLoading = false
+                
+                guard snapshot.exists(), let commentsDict = snapshot.value as? [String: Any] else {
+                    self.comments = [] // No comments found for this post
                     return
                 }
-                
-                do {
-                    let jsonData = try JSONSerialization.data(withJSONObject: postData)
-                    let post = try self.decoder.decode(PostModel.self, from: jsonData)
-                    continuation.resume(returning: post)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
 
-    private func fetchUserDetails(user: User) async throws -> UserModel {
-        // This function now returns a default user if one doesn't exist in the DB,
-        // which is often more robust than throwing an error.
-        try await withCheckedThrowingContinuation { continuation in
-            usersRef.child(user.uid).observeSingleEvent(of: .value) { snapshot in
-                // If user exists in DB, decode them
-                if snapshot.exists(), let userData = snapshot.value {
+                var fetchedComments: [CommentModel] = []
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .secondsSince1970
+                
+                for (_, commentData) in commentsDict {
+                    guard let commentDict = commentData as? [String: Any],
+                          let jsonData = try? JSONSerialization.data(withJSONObject: commentDict) else {
+                        print("Firebase: Failed to serialize a comment's data.")
+                        continue
+                    }
                     do {
-                        let jsonData = try JSONSerialization.data(withJSONObject: userData)
-                        let userDetails = try self.decoder.decode(UserModel.self, from: jsonData)
-                        continuation.resume(returning: userDetails)
-                        return
+                        let comment = try decoder.decode(CommentModel.self, from: jsonData)
+                        fetchedComments.append(comment)
                     } catch {
-                        // If decoding fails, fall through to create a default user
-                        print("Failed to decode user, creating default. Error: \(error)")
+                        print("Firebase: Failed to decode comment: \(error.localizedDescription)")
                     }
                 }
-                
-                // Fallback: If user not in DB or decoding failed, create a default from Auth
-                let defaultUser = UserModel(
-                    name: user.displayName ?? "Anonymous",
-                    nim: "",
-                    email: user.email ?? "",
-                    password: "",
-                    phoneNumber: user.phoneNumber ?? ""
-                )
-                continuation.resume(returning: defaultUser)
-            }
-        }
-    }
 
-    private func saveComment(_ comment: CommentModel) async throws {
-        // 1. Encode our Swift model to a JSON dictionary
-        let commentData = try encoder.encode(comment)
-        let commentJSON = try JSONSerialization.jsonObject(with: commentData) as? [String: Any]
-        
-        guard let finalJSON = commentJSON else {
-            throw NSError(domain: "AppError", code: 500, userInfo: [NSLocalizedDescriptionKey: "Failed to create JSON for comment"])
-        }
-        
-        // 2. Wrap the callback-based setValue in a continuation
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            commentsRef.child(comment.id.uuidString).setValue(finalJSON) { error, _ in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume(returning: ())
-                }
+                self.comments = fetchedComments.sorted { $0.commentDate > $1.commentDate }
+                self.errorMessage = nil
+
+            } withCancel: { [weak self] error in
+                guard let self = self else { return }
+                self.isLoading = false
+                self.errorMessage = "Firebase: Failed to fetch comments: \(error.localizedDescription)"
             }
-        }
     }
 }
