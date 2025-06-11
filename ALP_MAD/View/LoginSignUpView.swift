@@ -8,15 +8,10 @@
 import SwiftUI
 
 struct LoginSignUpView: View {
-    @Binding var showAuthSheet: Bool
+    // Binding @Binding var showAuthSheet: Bool dihilangkan
     @EnvironmentObject var authVM: AuthViewModel
     
     @State private var signUpClicked: Bool = true
-    @State private var name: String = ""
-    @State private var nim: String = ""
-    @State private var phoneNumber: String = ""
-    @State private var email: String = ""
-    @State private var password: String = ""
 
     var body: some View {
         ZStack {
@@ -82,7 +77,7 @@ struct LoginSignUpView: View {
                             await authVM.signIn()
                             if !authVM.falseCredential {
                                 authVM.checkUserSession()
-                                showAuthSheet = !authVM.isSignedIn
+                                // Logika untuk menutup sheet dihilangkan
                                 authVM.myUser = UserModel()
                             } else {
                                 authVM.resetForm()
@@ -159,12 +154,6 @@ struct LoginSignUpView: View {
                                 .background(Color(.systemGray6))
                                 .cornerRadius(25)
                             
-                            //for error handling later
-                            /*Text("Invalid Password")
-                                .padding(.leading, 5)
-                                .fontWeight(.medium)
-                                .foregroundColor(Color.red)*/
-                            
                             if authVM.falseCredential {
                                 Text("Invalid Username or Password")
                                     .fontWeight(.medium)
@@ -200,7 +189,7 @@ struct LoginSignUpView: View {
                             await authVM.signUp()
                             if !authVM.falseCredential {
                                 authVM.checkUserSession()
-                                showAuthSheet = !authVM.isSignedIn
+                                // Logika untuk menutup sheet dihilangkan
                                 authVM.myUser = UserModel()
                             }
                             
@@ -231,6 +220,7 @@ struct LoginSignUpView: View {
 }
 
 #Preview {
-    LoginSignUpView(showAuthSheet: .constant(true))
+    // Binding showAuthSheet dihilangkan dari preview
+    LoginSignUpView()
         .environmentObject(AuthViewModel())
 }

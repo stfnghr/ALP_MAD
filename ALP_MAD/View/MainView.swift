@@ -5,52 +5,35 @@
 //  Created by Stefanie Agahari on 22/05/25.
 //
 
-
 import SwiftUI
 
 struct MainView: View {
-    @EnvironmentObject var postViewModel: PostViewModel
-    @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var userViewModel: UserViewModel
-    @State private var showAuthSheet = false
-
+    @EnvironmentObject var authViewModel: AuthViewModel
+    
     var body: some View {
-        Group {
-            if authViewModel.isSignedIn {
-                TabView {
-                    HomeView()
-                        .tabItem {
-                            Label("Home", systemImage: "house")
-                        }
-                    CreatePostView()
-                        .tabItem {
-                            Label("New Post", systemImage: "plus.square.fill")
-                        }
-
-                    ProfileView(showAuthSheet: $showAuthSheet)
-                        .tabItem {
-                            Label("Profile", systemImage: "person")
-                        }
-                        .onAppear {
-                            userViewModel.fetchUser()
-                        }
+        // Langsung tampilkan TabView tanpa logika kondisional
+        TabView {
+            HomeView()
+                .tabItem {
+                    Label("Home", systemImage: "house")
                 }
-                .tint(.orange)
-            } else {
-                // show nothing but the white void instead of the mainview underneath the funny login sheet
-            }
+            CreatePostView()
+                .tabItem {
+                    Label("New Post", systemImage: "plus.square.fill")
+                }
+
+            ProfileView()
+                .tabItem {
+                    Label("Profile", systemImage: "person")
+                }
+                .onAppear {
+                    userViewModel.fetchUser()
+                }
         }
-        .onAppear {
-            if !authViewModel.isSignedIn {
-                showAuthSheet = true
-            }
-        }
-        .fullScreenCover(isPresented: $showAuthSheet) {
-            LoginSignUpView(showAuthSheet: $showAuthSheet)
-        }
+        .tint(.orange)
     }
 }
-
 
 #Preview {
     MainView()

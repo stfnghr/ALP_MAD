@@ -11,7 +11,7 @@ struct ProfileView: View {
     @EnvironmentObject var userVM: UserViewModel
     @EnvironmentObject var authVM: AuthViewModel
     @State var isEditingProfile = false
-    @Binding var showAuthSheet: Bool
+    // Binding @Binding var showAuthSheet: Bool dihilangkan
 
     var body: some View {
         NavigationStack {
@@ -66,22 +66,19 @@ struct ProfileView: View {
                             .background(Color.orange)
                             .cornerRadius(20)
                     }
-                    NavigationLink(destination: MainView()) {
-                        Button(action: {
-                            authVM.signOut()
-                            authVM.checkUserSession()
-                            if !authVM.isSignedIn {
-                                showAuthSheet = true
-                            }
-                        }) {
-                            Text("Log Out")
-                                .foregroundColor(.white)
-                                .fontWeight(.semibold)
-                                .padding()
-                                .frame(width: 150, height: 40)
-                                .background(Color.red)
-                                .cornerRadius(20)
-                        }
+                    
+                    Button(action: {
+                        authVM.signOut()
+                        authVM.checkUserSession()
+                        // Logika untuk menampilkan sheet dihilangkan
+                    }) {
+                        Text("Log Out")
+                            .foregroundColor(.white)
+                            .fontWeight(.semibold)
+                            .padding()
+                            .frame(width: 150, height: 40)
+                            .background(Color.red)
+                            .cornerRadius(20)
                     }
                 }.padding(.top, 50)
 
@@ -99,7 +96,8 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView(showAuthSheet: .constant(false))
+    // Binding showAuthSheet dihilangkan dari preview
+    ProfileView()
         .environmentObject(UserViewModel())
         .environmentObject(AuthViewModel())
 }
