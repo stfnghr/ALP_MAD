@@ -12,7 +12,7 @@ struct CreatePostView: View {
     @State private var alertMessage: String = ""
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Post")
@@ -111,7 +111,6 @@ struct CreatePostView: View {
                     }
                     .disabled(itemName.isEmpty || lostLocation.isEmpty || descriptionText.isEmpty || postViewModel.isLoading)
                     .padding(.bottom, 20)
-                    // Basically just a check the buttomn will be disabled if any of the three fields is empty
 
                 }
                 .padding(.horizontal, 25)
@@ -128,8 +127,11 @@ struct CreatePostView: View {
                 }
             }
             .alert(isPresented: $showAlert) {
-                Alert(title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK")))
-                // alert message thats shown when a post is succesfully made
+                Alert(
+                    title: Text(alertTitle),
+                    message: Text(alertMessage),
+                    dismissButton: .default(Text("OK"))
+                )
             }
         }
     }

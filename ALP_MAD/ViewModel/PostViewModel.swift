@@ -118,7 +118,6 @@ class PostViewModel: ObservableObject {
                 }
             }
             self.userPosts = fetchedUserPosts.sorted(by: { $0.postDate > $1.postDate })
-            print("Firebase: Fetched \(userPosts.count) user posts.")
             self.errorMessage = nil
         } withCancel: { [weak self] error in
             guard let self = self else { return }
@@ -140,7 +139,6 @@ class PostViewModel: ObservableObject {
             return
         }
 
-  
         usersRef.child(firebaseUser.uid).observeSingleEvent(of: .value) { [weak self] snapshot in
             guard let self = self else { return }
 

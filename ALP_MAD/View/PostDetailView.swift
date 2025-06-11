@@ -12,6 +12,7 @@ struct PostDetailView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Text(post.author.name)
+                            .font(.headline)
                         Text(postViewModel.postDateFormatter.string(from: post.postDate))
                             .font(.caption2)
                     }
@@ -27,21 +28,21 @@ struct PostDetailView: View {
                         .cornerRadius(10)
                 }
 
-                Image("Image")
+                Image("example-image")
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
                     .frame(width: 350, height: 350)
-                    .foregroundColor(Color(UIColor.systemGray3))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.gray, lineWidth: 0.5)
-                    )
+                    .cornerRadius(30)
                     .padding()
 
                 VStack(alignment: .leading) {
                     Text(post.itemName)
+                        .font(.headline)
+                    
                     HStack {
-                        Image(systemName: "location")
+                        Image(systemName: "location.fill")
+                            .foregroundColor(.orange)
+                        
                         Text(post.location)
                             .font(.caption)
                     }
@@ -57,6 +58,7 @@ struct PostDetailView: View {
                 HStack {
                     Image(systemName: "ellipsis.message")
                     Text("Comments")
+                        .font(.headline)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, 20)

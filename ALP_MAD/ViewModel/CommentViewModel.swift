@@ -2,7 +2,7 @@ import FirebaseAuth
 import FirebaseDatabase
 import Foundation
 
-@MainActor // Ensures UI updates happen on the main thread
+@MainActor
 class CommentViewModel: ObservableObject {
     @Published var comments: [CommentModel] = []
     @Published var isLoading = false
@@ -12,8 +12,6 @@ class CommentViewModel: ObservableObject {
     private let commentsRef = Database.database().reference().child("comments")
     private let usersRef = Database.database().reference().child("users")
     private let decoder = JSONDecoder()
-
-    // MARK: - Intentions
 
     func addComment(text: String, to postId: String) {
         self.isLoading = true
@@ -32,11 +30,9 @@ class CommentViewModel: ObservableObject {
             return
         }
 
-        // 1. Fetch user details first, just like in PostViewModel
         usersRef.child(firebaseUser.uid).observeSingleEvent(of: .value) { [weak self] snapshot in
             guard let self = self else { return }
 
-            // Determine author details from the snapshot or fallback to Auth info
             let authorDetails: UserModel
             if snapshot.exists(), let userData = snapshot.value as? [String: Any] {
                 authorDetails = UserModel(
@@ -47,7 +43,6 @@ class CommentViewModel: ObservableObject {
                     phoneNumber: userData["phoneNumber"] as? String ?? ""
                 )
             } else {
-                // Fallback if user is not in the 'users' table
                 authorDetails = UserModel(
                     name: firebaseUser.displayName ?? "Anonymous",
                     nim: "",
@@ -57,7 +52,6 @@ class CommentViewModel: ObservableObject {
                 )
             }
 
-            // 2. Create the comment model
             let newComment = CommentModel(
                 author: authorDetails,
                 text: text,
@@ -65,7 +59,6 @@ class CommentViewModel: ObservableObject {
                 postId: postId
             )
 
-            // 3. Encode the comment and save it (nested callback)
             let encoder = JSONEncoder()
             encoder.dateEncodingStrategy = .secondsSince1970
 
@@ -76,6 +69,7 @@ class CommentViewModel: ObservableObject {
                 return
             }
 
+            // The new comment is created, now save it to Firebase.
             self.commentsRef.child(newComment.id.uuidString).setValue(json) { [weak self] error, _ in
                 guard let self = self else { return }
                 self.isLoading = false
@@ -83,9 +77,9 @@ class CommentViewModel: ObservableObject {
                     self.errorMessage = "Firebase: Failed to create comment: \(error.localizedDescription)"
                     self.commentCreationSuccess = false
                 } else {
+                    self.comments.insert(newComment, at: 0)
                     self.commentCreationSuccess = true
                     self.errorMessage = nil
-                    // Optionally, you might want to re-fetch comments here
                 }
             }
         } withCancel: { [weak self] error in
@@ -129,6 +123,7 @@ class CommentViewModel: ObservableObject {
                     }
                 }
 
+                // Sort the comments by date, with the newest appearing first.
                 self.comments = fetchedComments.sorted { $0.commentDate > $1.commentDate }
                 self.errorMessage = nil
 
@@ -139,3 +134,4 @@ class CommentViewModel: ObservableObject {
             }
     }
 }
+

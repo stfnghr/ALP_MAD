@@ -24,10 +24,12 @@ final class CommentViewModelTesting: XCTestCase {
     }
 
     func testFetchComments() {
-        let expectation = XCTestExpectation(description: "Fetch comments from Firebase")
+        let expectation = XCTestExpectation(
+            description: "Fetch comments from Firebase")
 
         Task {
-            await self.viewModel.fetchComments(for: "F6A9831C-7114-476B-AEB9-BFD862EBACAB")
+            self.viewModel.fetchComments(
+                for: "F6A9831C-7114-476B-AEB9-BFD862EBACAB")
 
             DispatchQueue.main.async {
                 XCTAssertFalse(
@@ -40,27 +42,26 @@ final class CommentViewModelTesting: XCTestCase {
 
         wait(for: [expectation], timeout: 5.0)
     }
-    
+
     func testAddComment() async throws {
         self.authVM.myUser.email = "t@t.com"
         self.authVM.myUser.password = "123456"
 
         await self.authVM.signIn()
-        
+
         let text = "Test Unit Comment"
         let postId = "F6A9831C-7114-476B-AEB9-BFD862EBACAB"
-        
+
         viewModel.addComment(text: text, to: postId)
 
-        XCTAssertTrue(viewModel.commentCreationSuccess, "addComment should set commentCreationSuccess to true")
+        XCTAssertTrue(
+            viewModel.commentCreationSuccess,
+            "addComment should set commentCreationSuccess to true"
+        )
     }
 
-
-
     func testPerformanceExample() throws {
-        //     This is an example of a performance test case.
         self.measure {
-            //     Put the code you want to measure the time of here.
         }
     }
 }
