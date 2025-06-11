@@ -77,7 +77,7 @@ struct PostDetailView: View {
                         HStack(alignment: .top) {
                             VStack(alignment: .leading) {
                                 Text(comment.author.name)
-                                    .font(.subheadline)
+                                    .font(.headline)
                                 Text(comment.text)
                                     .font(.caption)
                             }
