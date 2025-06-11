@@ -31,7 +31,11 @@ struct EditPostView: View {
                             .font(.system(size: 16, weight: .bold))
                         TextField("Item Name", text: $itemName)
                             .font(.system(size: 16))
-                            .padding(EdgeInsets(top: 15, leading: 15, bottom: 15, trailing: 15))
+                            .padding(
+                                EdgeInsets(
+                                    top: 15, leading: 15, bottom: 15,
+                                    trailing: 15)
+                            )
                             .background(
                                 RoundedRectangle(cornerRadius: 30)
                                     .fill(Color(UIColor.systemGray6))
@@ -45,7 +49,11 @@ struct EditPostView: View {
                             .font(.system(size: 16, weight: .bold))
                         TextField("Location of Item", text: $lostLocation)
                             .font(.system(size: 16))
-                            .padding(EdgeInsets(top: 15, leading: 15, bottom: 15, trailing: 15))
+                            .padding(
+                                EdgeInsets(
+                                    top: 15, leading: 15, bottom: 15,
+                                    trailing: 15)
+                            )
                             .background(
                                 RoundedRectangle(cornerRadius: 30)
                                     .fill(Color(UIColor.systemGray6))
@@ -57,14 +65,20 @@ struct EditPostView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Description:")
                             .font(.system(size: 16, weight: .bold))
-                        TextField("Description", text: $descriptionText, axis: .vertical)
-                            .font(.system(size: 16))
-                            .padding(EdgeInsets(top: 15, leading: 15, bottom: 15, trailing: 15))
-                            .background(
-                                RoundedRectangle(cornerRadius: 30)
-                                    .fill(Color(UIColor.systemGray6))
-                            )
-                            .lineLimit(3...)
+                        TextField(
+                            "Description", text: $descriptionText,
+                            axis: .vertical
+                        )
+                        .font(.system(size: 16))
+                        .padding(
+                            EdgeInsets(
+                                top: 15, leading: 15, bottom: 15, trailing: 15)
+                        )
+                        .background(
+                            RoundedRectangle(cornerRadius: 30)
+                                .fill(Color(UIColor.systemGray6))
+                        )
+                        .lineLimit(3...)
                     }
                     .frame(minHeight: 120)
                     .frame(maxWidth: .infinity)
@@ -98,11 +112,21 @@ struct EditPostView: View {
                             }) {
                                 Text(ItemStatus.lost.rawValue)
                                     .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(selectedStatus == .lost ? Color.white : Color(UIColor.label).opacity(0.7))
+                                    .foregroundColor(
+                                        selectedStatus == .lost
+                                            ? Color.white
+                                            : Color(UIColor.label).opacity(0.7)
+                                    )
                                     .padding(.horizontal, 30)
                                     .padding(.vertical, 5)
                                     .frame(minWidth: 0)
-                                    .background(selectedStatus == .lost ? Color(red: 0.48, green: 0.83, blue: 0.44) : Color(UIColor.systemGray4))
+                                    .background(
+                                        selectedStatus == .lost
+                                            ? Color(
+                                                red: 0.48, green: 0.83,
+                                                blue: 0.44)
+                                            : Color(UIColor.systemGray4)
+                                    )
                                     .cornerRadius(8)
                             }
 
@@ -111,12 +135,22 @@ struct EditPostView: View {
                             }) {
                                 Text(ItemStatus.found.rawValue)
                                     .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(selectedStatus == .found ? Color.white : Color(UIColor.label).opacity(0.7))
+                                    .foregroundColor(
+                                        selectedStatus == .found
+                                            ? Color.white
+                                            : Color(UIColor.label).opacity(0.7)
+                                    )
                                     .padding(.horizontal, 30)
                                     .padding(.vertical, 5)
                                     .frame(minWidth: 50)
                                     .frame(minHeight: 0)
-                                    .background(selectedStatus == .found ? Color(red: 0.48, green: 0.83, blue: 0.44) : Color(UIColor.systemGray4))
+                                    .background(
+                                        selectedStatus == .found
+                                            ? Color(
+                                                red: 0.48, green: 0.83,
+                                                blue: 0.44)
+                                            : Color(UIColor.systemGray4)
+                                    )
                                     .cornerRadius(8)
                             }
                             Spacer()
@@ -133,7 +167,6 @@ struct EditPostView: View {
                             return
                         }
 
-    
                         let updatedPost = PostModel(
                             id: originalPost.id,
                             author: originalPost.author,
@@ -141,13 +174,15 @@ struct EditPostView: View {
                             description: descriptionText,
                             location: lostLocation,
                             postDate: originalPost.postDate,
-                            status: selectedStatus == .lost // Convert ItemStatus back to Bool
+                            status: selectedStatus == .lost  // Convert ItemStatus back to Bool
                         )
                         postViewModel.updatePost(post: updatedPost)
                     }) {
                         if postViewModel.isLoading {
                             ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                .progressViewStyle(
+                                    CircularProgressViewStyle(tint: .white)
+                                )
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 13)
                                 .background(Color.orange.opacity(0.7))
@@ -162,7 +197,11 @@ struct EditPostView: View {
                                 .cornerRadius(30)
                         }
                     }
-                    .disabled(itemName.isEmpty || lostLocation.isEmpty || descriptionText.isEmpty || postViewModel.isLoading)
+                    .disabled(
+                        itemName.isEmpty || lostLocation.isEmpty
+                            || descriptionText.isEmpty
+                            || postViewModel.isLoading
+                    )
                     .padding(.bottom, 20)
 
                 }
@@ -173,14 +212,15 @@ struct EditPostView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        dismiss()
+                        //                        presentationMode.wrappedValue.dismiss()
                     }
                 }
             }
             .onChange(of: postViewModel.postUpdateSuccess) { successState in
                 if successState {
                     self.alertTitle = "Post Updated!"
-                    self.alertMessage = "Your item has been successfully updated."
+                    self.alertMessage =
+                        "Your item has been successfully updated."
                     self.showAlert = true
                     postViewModel.postUpdateSuccess = false
                 }
@@ -193,23 +233,25 @@ struct EditPostView: View {
                 )
             }
         }
-         .onAppear {
-         if let post = postToEdit {
-         self.itemName = post.itemName
-        self.lostLocation = post.location
-        self.descriptionText = post.description
-         self.selectedStatus = post.status ? .lost : .found
-         }
+        .onAppear {
+            if let post = postToEdit {
+                self.itemName = post.itemName
+                self.lostLocation = post.location
+                self.descriptionText = post.description
+                self.selectedStatus = post.status ? .lost : .found
+            }
         }
     }
 }
 
 #Preview {
-    let sampleAuthor = UserModel(name: "Vivian Banshee", email: "Vivian@example.com")
+    let sampleAuthor = UserModel(
+        name: "Vivian Banshee", email: "Vivian@example.com")
     let samplePost = PostModel(
         author: sampleAuthor,
         itemName: "Vivian's Old Item Name",
-        description: "Fight on, my friend. If you cannot face the suffering of life, then life itself will lose its meaning.",
+        description:
+            "Fight on, my friend. If you cannot face the suffering of life, then life itself will lose its meaning.",
         location: "Rhodes Island",
         postDate: Date(),
         status: true

@@ -36,16 +36,14 @@ struct HomeCardView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 20)
                     .fill(Color(UIColor.systemGray6))
-                    .frame(height: 200)
-                    .frame(maxWidth: .infinity)
-                
-                Image(systemName: "photo.on.rectangle.angled")
+
+                Image("example-image")
                     .resizable()
-                    .scaledToFit()
-                    .frame(width: 50, height: 50)
-                    .foregroundColor(Color(UIColor.systemGray2))
+                    .scaledToFill()
             }
-            .padding(.vertical, 8)
+            .frame(height: 200)
+            .frame(maxWidth: .infinity)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
 
             Text(post.itemName)
                 .font(.title3)

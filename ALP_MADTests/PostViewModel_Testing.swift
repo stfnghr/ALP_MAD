@@ -10,59 +10,51 @@ import XCTest
 @MainActor
 final class PostViewModel_Testing: XCTestCase {
     
-    private var viewmModel: PostViewModel!
+    private var viewModel: PostViewModel!
     private var authVM: AuthViewModel!
     
     override func setUpWithError() throws {
-        self.viewmModel = PostViewModel()
+        self.viewModel = PostViewModel()
         self.authVM = AuthViewModel()
     }
     
     override func tearDownWithError() throws {
-        self.viewmModel = nil
+        self.viewModel = nil
         self.authVM = nil
     }
     
-    // FetchPosts
-    func testFetchPosts() throws {
-        let expectation = XCTestExpectation(description: "Fetch Posts From Firebase and expect posts array not to be empty")
-        
-        self.viewmModel.fetchPosts()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+    /// Tests fetching all posts from Firebase.
+        func testFetchPosts() async throws {
+            await viewModel.fetchPosts()
+            
             XCTAssertFalse(
-                self.viewmModel.posts.isEmpty,
-                "Posts array should not be empty after fetching. Check Firebase data at '/posts'."
+                self.viewModel.posts.isEmpty,
+                "Posts array should not be empty after fetching. Check your Firebase '/posts' collection."
             )
-            expectation.fulfill()
         }
-        
-        wait(for: [expectation], timeout: 5.0)
-    }
-    
-    //FetchUsersPosts
-    func testFetchUserPosts() throws {
-           let expectation = XCTestExpectation(description: "Fetch User's Posts From Firebase and expect posts array not to be empty")
-           
-           self.viewmModel.fetchUserPosts()
-           
-           DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-               XCTAssertFalse(
-                   self.viewmModel.userPosts.isEmpty,
-                   "userPosts array should not be empty after fetching."
-               )
-               expectation.fulfill()
-           }
-           
-           wait(for: [expectation], timeout: 120.0)
-       }
 
+    //FetchUsersPosts
+        func testFetchUserPosts() throws {
+               let expectation = XCTestExpectation(description: "Fetch User's Posts From Firebase and expect posts array not to be empty")
+               
+               self.viewModel.fetchUserPosts()
+               
+               DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                   XCTAssertFalse(
+                       self.viewModel.userPosts.isEmpty,
+                       "userPosts array should not be empty after fetching."
+                   )
+                   expectation.fulfill()
+               }
+               
+               wait(for: [expectation], timeout: 120.0)
+           }
     
     //AddPost
     func testAddPost() throws {
         let expectation = XCTestExpectation(description: "Add a new post and check for success")
         
-        self.viewmModel.addPost(
+        self.viewModel.addPost(
             itemName: "Kori's Laptop",
             description: "Lost black MacBook Pro, 13-inch, M1 chip.",
             location: "University Library, 2nd Floor",
@@ -71,8 +63,8 @@ final class PostViewModel_Testing: XCTestCase {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) { // Using a 4-second delay, adjust if needed
             XCTAssertTrue(
-                self.viewmModel.postCreationSuccess,
-                "postCreationSuccess should be true after successfully adding a post. Ensure a user is authenticated. Error: \(self.viewmModel.errorMessage ?? "No error message")"
+                self.viewModel.postCreationSuccess,
+                "postCreationSuccess should be true after successfully adding a post. Ensure a user is authenticated. Error: \(self.viewModel.errorMessage ?? "No error message")"
             )
             expectation.fulfill()
         }
@@ -84,21 +76,21 @@ final class PostViewModel_Testing: XCTestCase {
     func testDeletePost() throws {
         let expectation = XCTestExpectation(description: "Attempt to delete a user's post and check for success")
         
-        self.viewmModel.fetchUserPosts()
+        self.viewModel.fetchUserPosts()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
-            guard let postToDelete = self.viewmModel.userPosts.first else {
+            guard let postToDelete = self.viewModel.userPosts.first else {
                 XCTFail("Prerequisite not met: No user posts found to delete. Ensure the test user is authenticated and has at least one post.")
                 expectation.fulfill()
                 return
             }
             
-            self.viewmModel.deletePost(post: postToDelete)
+            self.viewModel.deletePost(post: postToDelete)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 XCTAssertTrue(
-                    self.viewmModel.postDeletionSuccess,
-                    "postDeletionSuccess should be true after successfully deleting a post. Error: \(self.viewmModel.errorMessage ?? "No error message")"
+                    self.viewModel.postDeletionSuccess,
+                    "postDeletionSuccess should be true after successfully deleting a post. Error: \(self.viewModel.errorMessage ?? "No error message")"
                 )
                 expectation.fulfill()
             }
@@ -110,10 +102,10 @@ final class PostViewModel_Testing: XCTestCase {
 func testUpdatePost() throws {
     let expectation = XCTestExpectation(description: "Update a User's posts")
 
-    self.viewmModel.fetchUserPosts()
+    self.viewModel.fetchUserPosts()
 
     DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
-        guard var postToUpdate = self.viewmModel.userPosts.first else {
+        guard var postToUpdate = self.viewModel.userPosts.first else {
             XCTFail("No user posts found to update.")
             expectation.fulfill()
             return
@@ -123,12 +115,12 @@ func testUpdatePost() throws {
         let updatedItemName = "UPDATED: \(originalItemName) \(Int.random(in: 1...100))"
         postToUpdate.itemName = updatedItemName
 
-        self.viewmModel.updatePost(post: postToUpdate)
+        self.viewModel.updatePost(post: postToUpdate)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             XCTAssertTrue(
-                self.viewmModel.postUpdateSuccess,
-                "postUpdateSuccess should be true after successfully updating a post. Error: \(self.viewmModel.errorMessage ?? "No error message")"
+                self.viewModel.postUpdateSuccess,
+                "postUpdateSuccess should be true after successfully updating a post. Error: \(self.viewModel.errorMessage ?? "No error message")"
             )
             expectation.fulfill()
         }

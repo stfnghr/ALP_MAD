@@ -3,7 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var postViewModel: PostViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
-    @State private var selectedIndex = 0  // Basically use to check if its 'All Posts' or 'My Posts'
+    @State private var selectedIndex = 0 
     let options = ["All Posts", "My Posts"]
     @State private var showingCreatePostView = false
     @State private var showingEditPostView = false

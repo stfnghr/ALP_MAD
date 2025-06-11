@@ -262,7 +262,7 @@ class PostViewModel: NSObject, ObservableObject, WCSessionDelegate {
                 }
             }
             self.userPosts = fetchedUserPosts.sorted(by: { $0.postDate > $1.postDate })
-            print("Firebase: Fetched \(self.userPosts.count) posts for current user.")
+            self.errorMessage = nil
         } withCancel: { [weak self] error in
             guard let self = self else { return }
             self.isLoading = false
@@ -283,7 +283,7 @@ class PostViewModel: NSObject, ObservableObject, WCSessionDelegate {
             return
         }
 
-        usersRef.child(firebaseUser.uid).observeSingleEvent(of: .value) { [weak self] userSnapshot in
+        usersRef.child(firebaseUser.uid).observeSingleEvent(of: .value) { [weak self] snapshot in
             guard let self = self else { return }
 
             let authorDetails: UserModel
