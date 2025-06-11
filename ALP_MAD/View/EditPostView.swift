@@ -7,6 +7,7 @@ struct EditPostView: View {
     }
 
     @EnvironmentObject var postViewModel: PostViewModel
+    @Environment(\.dismiss) var dismiss
     let postToEdit: PostModel?
     @State private var itemName: String = ""
     @State private var lostLocation: String = ""
@@ -172,7 +173,7 @@ struct EditPostView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-//                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
             }

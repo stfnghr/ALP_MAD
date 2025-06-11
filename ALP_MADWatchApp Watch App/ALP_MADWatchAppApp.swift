@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct ALP_MADWatchApp_Watch_AppApp: App {
+    @StateObject private var connectivityProvider = WatchConnectivityProvider()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(connectivityProvider)
         }
     }
 }
