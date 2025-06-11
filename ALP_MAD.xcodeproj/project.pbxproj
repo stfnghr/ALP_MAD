@@ -13,6 +13,8 @@
 		3FC3127C2DE5A44D003566FB /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 3FC3127B2DE5A44D003566FB /* FirebaseAuth */; };
 		3FC3127E2DE5A44D003566FB /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 3FC3127D2DE5A44D003566FB /* FirebaseCore */; };
 		3FC312802DE5A44D003566FB /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 3FC3127F2DE5A44D003566FB /* FirebaseDatabase */; };
+		B955D79A2DF9B9A600941302 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B955D7982DF9B99600941302 /* WatchConnectivity.framework */; };
+		B955D79F2DF9B9B700941302 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B955D79D2DF9B9B500941302 /* WatchConnectivity.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +69,9 @@
 		3F9236BF2DF82E5A0023B5D2 /* ALP_MADTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ALP_MADTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F9237172DF82EC90023B5D2 /* ALP_MADTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ALP_MADTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FD972402DDEBD4700B3D542 /* ALP_MAD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ALP_MAD.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B955D7982DF9B99600941302 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = System/Library/Frameworks/WatchConnectivity.framework; sourceTree = SDKROOT; };
+		B955D79D2DF9B9B500941302 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS11.2.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
+		B955D7A22DF9CEEE00941302 /* ALP_MAD.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ALP_MAD.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -94,6 +99,15 @@
 			);
 			target = 3F9237162DF82EC90023B5D2 /* ALP_MADTests */;
 		};
+		B955D7942DF9B77A00941302 /* Exceptions for "ALP_MAD" folder in "ALP_MADWatchApp Watch App" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Model/CommentModel.swift,
+				Model/PostModel.swift,
+				Model/UserModel.swift,
+			);
+			target = 3F15E5E52DF1801200692000 /* ALP_MADWatchApp Watch App */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -120,6 +134,7 @@
 		3FD972422DDEBD4700B3D542 /* ALP_MAD */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				B955D7942DF9B77A00941302 /* Exceptions for "ALP_MAD" folder in "ALP_MADWatchApp Watch App" target */,
 				3F9237292DF82EE70023B5D2 /* Exceptions for "ALP_MAD" folder in "ALP_MADTests" target */,
 			);
 			path = ALP_MAD;
@@ -132,6 +147,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B955D79F2DF9B9B700941302 /* WatchConnectivity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,6 +181,7 @@
 				3FC3127C2DE5A44D003566FB /* FirebaseAuth in Frameworks */,
 				3FC3127E2DE5A44D003566FB /* FirebaseCore in Frameworks */,
 				3FC312782DE5A44D003566FB /* FirebaseAnalytics in Frameworks */,
+				B955D79A2DF9B9A600941302 /* WatchConnectivity.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,11 +191,13 @@
 		3FD972372DDEBD4700B3D542 = {
 			isa = PBXGroup;
 			children = (
+				B955D7A22DF9CEEE00941302 /* ALP_MAD.xctestplan */,
 				3FD972422DDEBD4700B3D542 /* ALP_MAD */,
 				3F15E5E72DF1801200692000 /* ALP_MADWatchApp Watch App */,
 				3F15E5F52DF1801400692000 /* ALP_MADWatchApp Watch AppTests */,
 				3F15E5FF2DF1801400692000 /* ALP_MADWatchApp Watch AppUITests */,
 				3F9237182DF82EC90023B5D2 /* ALP_MADTests */,
+				B955D7972DF9B99600941302 /* Frameworks */,
 				3FD972412DDEBD4700B3D542 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -194,6 +213,15 @@
 				3F9237172DF82EC90023B5D2 /* ALP_MADTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B955D7972DF9B99600941302 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B955D79D2DF9B9B500941302 /* WatchConnectivity.framework */,
+				B955D7982DF9B99600941302 /* WatchConnectivity.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -499,7 +527,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Debug;
 		};
@@ -527,7 +555,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Release;
 		};
@@ -773,6 +801,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -801,6 +830,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

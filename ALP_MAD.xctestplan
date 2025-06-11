@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "01D9525F-5555-4216-92BC-4241A130D62D",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:ALP_MAD.xcodeproj",
+      "identifier" : "3FD9723F2DDEBD4700B3D542",
+      "name" : "ALP_MAD"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:ALP_MAD.xcodeproj",
+        "identifier" : "3F9237162DF82EC90023B5D2",
+        "name" : "ALP_MADTests"
+      }
+    }
+  ],
+  "version" : 1
+}

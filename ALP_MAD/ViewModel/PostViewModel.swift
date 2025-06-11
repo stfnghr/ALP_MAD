@@ -287,7 +287,7 @@ class PostViewModel: NSObject, ObservableObject, WCSessionDelegate {
             guard let self = self else { return }
 
             let authorDetails: UserModel
-            if userSnapshot.exists(), let userData = userSnapshot.value as? [String: Any] {
+            if snapshot.exists(), let userData = snapshot.value as? [String: Any] {
                 authorDetails = UserModel(
                     name: userData["name"] as? String ?? firebaseUser.displayName ?? "Anonymous",
                     nim: userData["nim"] as? String ?? "",
